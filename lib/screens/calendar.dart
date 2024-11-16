@@ -71,26 +71,35 @@ class _CalendarScreenState extends State<CalendarScreen> {
               controller:
                   _horizontalHeaderScrollController, // Sync horizontal scroll
               child: Row(
-                children: List.generate(daysOfWeek.length, (index) {
-                  return Container(
-                    width: dayCellWidth,
-                    margin: const EdgeInsets.symmetric(horizontal: 5),
-                    decoration: BoxDecoration(
-                      color: Colors.green[800],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Center(
-                      child: Text(
-                        '${daysOfWeek[index]}\n04/${11 + index}',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                children: [
+                  Container(
+                    width: 60, // Blank space at the intersection
+                    height: 80,
+                    color: Colors.white,
+                  ),
+                  Row(
+                    children: List.generate(daysOfWeek.length, (index) {
+                      return Container(
+                        width: dayCellWidth,
+                        margin: const EdgeInsets.symmetric(horizontal: 5),
+                        decoration: BoxDecoration(
+                          color: Colors.green[800],
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                      ),
-                    ),
-                  );
-                }),
+                        child: Center(
+                          child: Text(
+                            '${daysOfWeek[index]}\n04/${11 + index}',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                ],
               ),
             ),
           ),
