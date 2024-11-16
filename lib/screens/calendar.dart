@@ -20,8 +20,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       _hourScrollController.jumpTo(_contentScrollController.offset);
     });
     _horizontalScrollController.addListener(() {
-      _horizontalHeaderScrollController
-          .jumpTo(_horizontalScrollController.offset);
+      _horizontalHeaderScrollController.jumpTo(_horizontalScrollController.offset);
     });
   }
 
@@ -49,11 +48,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
     ];
 
     // Mock events data
-    final List<List<bool>> events =
-        List.generate(24, (i) => List.generate(7, (j) => false));
+    final List<List<bool>> events = List.generate(24, (i) => List.generate(7, (j) => false));
     events[10][2] = true; // Event at 10:00 on Wednesday
     events[15][4] = true; // Event at 15:00 on Friday
-    events[8][1] = true; // Event at 08:00 on Tuesday
+    events[8][1] = true;  // Event at 08:00 on Tuesday
     events[12][5] = true; // Event at 12:00 on Saturday
     events[18][3] = true; // Event at 18:00 on Thursday
 
@@ -61,109 +59,117 @@ class _CalendarScreenState extends State<CalendarScreen> {
       appBar: AppBar(
         title: const Text('Calendar 7 Days'),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          // Day header row (horizontal scroll)
-          SizedBox(
-            height: 80,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              controller:
-                  _horizontalHeaderScrollController, // Sync horizontal scroll
-              child: Row(
-                children: [
-                  Container(
-                    width: 60, // Blank space at the intersection
-                    height: 80,
-                    color: Colors.white,
-                  ),
-                  Row(
-                    children: List.generate(daysOfWeek.length, (index) {
-                      return Container(
-                        width: dayCellWidth,
-                        margin: const EdgeInsets.symmetric(horizontal: 5),
-                        decoration: BoxDecoration(
-                          color: Colors.green[800],
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Center(
-                          child: Text(
-                            '${daysOfWeek[index]}\n04/${11 + index}',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+          Column(
+            children: [
+              // Day header row (horizontal scroll)
+              SizedBox(
+                height: 80,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  controller: _horizontalHeaderScrollController, // Sync horizontal scroll
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 60, // Blank space at the intersection
+                        height: 80,
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                      ),
+                      Row(
+                        children: List.generate(daysOfWeek.length, (index) {
+                          return Container(
+                            width: dayCellWidth, // Ensure consistent width
+                            margin: const EdgeInsets.symmetric(horizontal: 5),
+                            padding: const EdgeInsets.all(8), // Add padding
+                            decoration: BoxDecoration(
+                              color: Colors.green[800],
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                          ),
-                        ),
-                      );
-                    }),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          // Calendar content (horizontal and vertical scroll)
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Fixed hour column
-                SizedBox(
-                  width: 60,
-                  child: ListView.builder(
-                    controller: _hourScrollController, // Sync vertical scroll
-                    itemCount: 24,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        height: hourCellHeight,
-                        alignment: Alignment.center,
-                        child: Text(
-                          '${index.toString().padLeft(2, '0')}:00',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      );
-                    },
+                            child: Center(
+                              child: Text(
+                                '${daysOfWeek[index]}\n04/${11 + index}',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                    ],
                   ),
                 ),
-                // Calendar grid (horizontal and vertical scroll)
-                Expanded(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    controller:
-                        _horizontalScrollController, // Sync horizontal scroll
-                    child: SizedBox(
-                      width: (dayCellWidth + 10) * daysOfWeek.length,
+              ),
+              // Calendar content (horizontal and vertical scroll)
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Fixed hour column
+                    SizedBox(
+                      width: 60,
                       child: ListView.builder(
-                        controller:
-                            _contentScrollController, // Sync vertical scroll
+                        controller: _hourScrollController, // Sync vertical scroll
                         itemCount: 24,
-                        itemBuilder: (context, hourIndex) {
-                          return Row(
-                            children:
-                                List.generate(daysOfWeek.length, (dayIndex) {
-                              bool isEvent = events[hourIndex][dayIndex];
-                              return Container(
-                                width: dayCellWidth,
-                                height: hourCellHeight,
-                                margin: const EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                  color: isEvent
-                                      ? Colors.blue
-                                      : Colors.green.withOpacity(0.5),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child:
-                                    Center(child: Text(isEvent ? 'Event' : '')),
-                              );
-                            }),
+                        itemBuilder: (context, index) {
+                          return Container(
+                            height: hourCellHeight,
+                            alignment: Alignment.center,
+                            child: Text(
+                              '${index.toString().padLeft(2, '0')}:00',
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
                           );
                         },
                       ),
                     ),
-                  ),
+                    // Calendar grid (horizontal and vertical scroll)
+                    Expanded(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        controller: _horizontalScrollController, // Sync horizontal scroll
+                        child: SizedBox(
+                          width: (dayCellWidth + 10) * daysOfWeek.length, // Ensure consistent width
+                          child: ListView.builder(
+                            controller: _contentScrollController, // Sync vertical scroll
+                            itemCount: 24,
+                            itemBuilder: (context, hourIndex) {
+                              return Row(
+                                children: List.generate(daysOfWeek.length, (dayIndex) {
+                                  bool isEvent = events[hourIndex][dayIndex];
+                                  return Container(
+                                    width: dayCellWidth,
+                                    height: hourCellHeight,
+                                    margin: const EdgeInsets.all(5),
+                                    decoration: BoxDecoration(
+                                      color: isEvent ? Colors.blue : Colors.green.withOpacity(0.5),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Center(child: Text(isEvent ? 'Event' : '')),
+                                  );
+                                }),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
+            ],
+          ),
+          // Fixed blank space at the intersection
+          Positioned(
+            top: 0,
+            left: 0,
+            width: 60,
+            height: 80,
+            child: Container(
+              color: Theme.of(context).scaffoldBackgroundColor,
             ),
           ),
         ],
