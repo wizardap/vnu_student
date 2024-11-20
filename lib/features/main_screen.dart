@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vnu_student/screen/academic_results_screen.dart';
-import 'package:vnu_student/screen/home_screen.dart';
+import 'package:vnu_student/features/academic_results/screen/academic_results_screen.dart';
+import 'package:vnu_student/features/home/screens/home_screen.dart';
 
 class MainScreen extends StatefulWidget {
   @override

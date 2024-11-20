@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vnu_student/screen/main_screen.dart';
+import 'package:vnu_student/features/main_screen.dart';
 
 
 void main() {
