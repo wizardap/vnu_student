@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/constants/constants.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({Key? key}) : super(key: key);
@@ -8,26 +9,23 @@ class CalendarScreen extends StatefulWidget {
 }
 
 class _CalendarScreenState extends State<CalendarScreen> {
-  final ScrollController _hourScrollController = ScrollController();
-  final ScrollController _contentScrollController = ScrollController();
   final ScrollController _horizontalScrollController = ScrollController();
   final ScrollController _horizontalHeaderScrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    _contentScrollController.addListener(() {
-      _hourScrollController.jumpTo(_contentScrollController.offset);
-    });
     _horizontalScrollController.addListener(() {
-      _horizontalHeaderScrollController.jumpTo(_horizontalScrollController.offset);
+      if (_horizontalHeaderScrollController.offset !=
+          _horizontalScrollController.offset) {
+        _horizontalHeaderScrollController
+            .jumpTo(_horizontalScrollController.offset);
+      }
     });
   }
 
   @override
   void dispose() {
-    _hourScrollController.dispose();
-    _contentScrollController.dispose();
     _horizontalScrollController.dispose();
     _horizontalHeaderScrollController.dispose();
     super.dispose();
@@ -35,8 +33,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final double hourCellHeight = 60;
-    final double dayCellWidth = 120;
+    final double hourCellHeight = 60; // Chiều cao mỗi ô giờ
+    final double dayCellWidth = 120; // Chiều rộng mỗi ô ngày
     final List<String> daysOfWeek = [
       "Monday",
       "Tuesday",
@@ -47,133 +45,151 @@ class _CalendarScreenState extends State<CalendarScreen> {
       "Sunday"
     ];
 
-    // Mock events data
-    final List<List<bool>> events = List.generate(24, (i) => List.generate(7, (j) => false));
-    events[10][2] = true; // Event at 10:00 on Wednesday
-    events[15][4] = true; // Event at 15:00 on Friday
-    events[8][1] = true;  // Event at 08:00 on Tuesday
-    events[12][5] = true; // Event at 12:00 on Saturday
-    events[18][3] = true; // Event at 18:00 on Thursday
+    // Dữ liệu sự kiện (dayIndex, startHour, duration)
+    final List<Map<String, dynamic>> events = [
+      {'dayIndex': 2, 'startHour': 10, 'duration': 2, 'headerValue': "Sự kiện 1"}, // Event trên Wednesday
+      {'dayIndex': 4, 'startHour': 15, 'duration': 1, 'headerValue': "Sự kiện 2"}, // Event trên Friday
+      {'dayIndex': 1, 'startHour': 8, 'duration': 3, 'headerValue': "Sự kiện 3"}, // Event trên Tuesday
+    ];
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Calendar 7 Days'),
+        title: const Text('Calendar'),
+        titleTextStyle: AppTextStyles.appBarTitle,
       ),
       body: Stack(
-        children: [
-          Column(
-            children: [
-              // Day header row (horizontal scroll)
-              SizedBox(
-                height: 80,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  controller: _horizontalHeaderScrollController, // Sync horizontal scroll
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 60, // Blank space at the intersection
-                        height: 80,
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                      ),
-                      Row(
-                        children: List.generate(daysOfWeek.length, (index) {
-                          return Container(
-                            width: dayCellWidth, // Ensure consistent width
-                            margin: const EdgeInsets.symmetric(horizontal: 5),
-                            padding: const EdgeInsets.all(8), // Add padding
-                            decoration: BoxDecoration(
-                              color: Colors.green[800],
-                              borderRadius: BorderRadius.circular(10),
+      children : [
+        Column(
+          children: [
+            // Hàng tiêu đề ngày
+            SizedBox(
+              height: 80,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                controller: _horizontalHeaderScrollController,
+                child: Row(
+                  children: [
+                    Container(
+                      width: 60, // Ô trống ở góc trên bên trái
+                      height: 80,
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                    ),
+                    Row(
+                      children: List.generate(daysOfWeek.length, (index) {
+                        return Container(
+                          width: dayCellWidth,
+                          margin: const EdgeInsets.symmetric(horizontal: 5),
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryGreen,
+                            borderRadius: BorderRadius.circular(AppSizes.borderRadius),
+                          ),
+                          child: Center(
+                            child: Text(
+                              '${daysOfWeek[index]}\n04/${11 + index}',
+                              textAlign: TextAlign.center,
+                              style: AppTextStyles.tableHeader,
+                              // style: const TextStyle(
+                              //   color: Colors.white,
+                              //   fontWeight: FontWeight.bold,
+                              // ),
                             ),
-                            child: Center(
-                              child: Text(
-                                '${daysOfWeek[index]}\n04/${11 + index}',
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
-                      ),
-                    ],
-                  ),
+                          ),
+                        );
+                      }),
+                    ),
+                  ],
                 ),
               ),
-              // Calendar content (horizontal and vertical scroll)
-              Expanded(
+            ),
+            // Nội dung cuộn dọc và ngang
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Fixed hour column
-                    SizedBox(
-                      width: 60,
-                      child: ListView.builder(
-                        controller: _hourScrollController, // Sync vertical scroll
-                        itemCount: 24,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            height: hourCellHeight,
-                            alignment: Alignment.center,
-                            child: Text(
-                              '${index.toString().padLeft(2, '0')}:00',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          );
-                        },
-                      ),
+                    // Cột giờ cố định
+                    Column(
+                      children: List.generate(24, (index) {
+                        return Container(
+                          height: hourCellHeight,
+                          width: 60,
+                          alignment: Alignment.center,
+                          child: Text(
+                            '${index.toString().padLeft(2, '0')}:00',
+                            // style: AppTextStyles.tableData,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        );
+                      }),
                     ),
-                    // Calendar grid (horizontal and vertical scroll)
+                    // Nội dung lịch
                     Expanded(
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
-                        controller: _horizontalScrollController, // Sync horizontal scroll
-                        child: SizedBox(
-                          width: (dayCellWidth + 10) * daysOfWeek.length, // Ensure consistent width
-                          child: ListView.builder(
-                            controller: _contentScrollController, // Sync vertical scroll
-                            itemCount: 24,
-                            itemBuilder: (context, hourIndex) {
-                              return Row(
-                                children: List.generate(daysOfWeek.length, (dayIndex) {
-                                  bool isEvent = events[hourIndex][dayIndex];
-                                  return Container(
-                                    width: dayCellWidth,
-                                    height: hourCellHeight,
-                                    margin: const EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                      color: isEvent ? Colors.blue : Colors.green.withOpacity(0.5),
-                                      borderRadius: BorderRadius.circular(10),
+                        controller: _horizontalScrollController,
+                        child: Stack(
+                          children: [
+                            // Hàng duy nhất tô màu xám
+                            Row(
+                              children:
+                                  List.generate(daysOfWeek.length, (dayIndex) {
+                                return Container(
+                                  width: dayCellWidth,
+                                  height: hourCellHeight * 24 + hourCellHeight / 2.0, // Chiều cao của cột giờ + 1/2 chiều cao của ô giờ 23:00->00:00
+                                  margin: const EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.iconGray.withOpacity(0.5),
+                                    borderRadius: BorderRadius.circular(AppSizes.borderRadius),
+                                  )
+                                );
+                              }),
+                            ),
+                            // Sự kiện được căn chỉnh
+                            for (var event in events)
+                              Positioned(
+                                top: event['startHour'] * hourCellHeight + hourCellHeight / 2.0, // Text ở vị trí giữa
+                                left: event['dayIndex'] * (dayCellWidth + 10) +
+                                    10, // Cách biên trái
+                                child: Container(
+                                  width: dayCellWidth - 10, // Cách biên phải
+                                  height: event['duration'] * hourCellHeight,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.pieChartGreen3.withOpacity(0.5),
+                                    borderRadius: BorderRadius.circular(AppSizes.borderRadius),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      event['headerValue'],
+                                      style: TextStyle(
+                                        color: AppColors.textBlack,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                    child: Center(child: Text(isEvent ? 'Event' : '')),
-                                  );
-                                }),
-                              );
-                            },
-                          ),
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
-          // Fixed blank space at the intersection
-          Positioned(
-            top: 0,
-            left: 0,
-            width: 60,
-            height: 80,
-            child: Container(
-              color: Theme.of(context).scaffoldBackgroundColor,
             ),
+          ],
+        ),
+        Positioned(
+          top: 0,
+          left: 0,
+          width: 60,
+          height: 80,
+          child: Container(
+            color: Theme.of(context).scaffoldBackgroundColor,
           ),
-        ],
-      ),
+        ),
+      ]),
     );
   }
 }
