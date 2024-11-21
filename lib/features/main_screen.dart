@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:vnu_student/features/academic_results/screen/academic_results_screen.dart';
 import 'package:vnu_student/features/home/screens/home_screen.dart';
 
+import 'package:vnu_student/features/ask_screen.dart';
+
 class MainScreen extends StatefulWidget {
   @override
   _MainScreenState createState() => _MainScreenState();
@@ -71,12 +73,6 @@ class CalendarScreen extends StatelessWidget {
   }
 }
 
-class AskScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('Ask Screen'));
-  }
-}
 
 class AdministrativeGateScreen extends StatelessWidget {
   @override
