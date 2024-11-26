@@ -102,6 +102,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
     }
   }
 
+  void _previousWeek() {
+    setState(() {
+      _selectedDate = _selectedDate.subtract(Duration(days: 7));
+      curMonday = curMonday.subtract(Duration(days: 7));
+    });
+  }
+
+  void _nextWeek() {
+    setState(() {
+      _selectedDate = _selectedDate.add(Duration(days: 7));
+      curMonday = curMonday.add(Duration(days: 7));
+    });
+  }
+
   // Lấy ngày của một ngày trong tuần
   int getDay(int dayIndex, DateTime curMonday) {
     return curMonday.add(Duration(days: dayIndex)).day;
@@ -137,25 +151,36 @@ class _CalendarScreenState extends State<CalendarScreen> {
           Positioned(
             top: 10,
             left: 10,
-            child: ElevatedButton(
-              onPressed: () => _selectDate(context),
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+            child: Row(
+              children: [
+                ElevatedButton(
+                  onPressed: () => _previousWeek(),
+                  style: ButtonStyles.primaryStyle,
+                  child: Icon(Icons.arrow_back),
                 ),
-                padding: const EdgeInsets.all(10),
-              ),
-              child: Text(
-                curMonday.year == getYear(6, curMonday) ?
-                (curMonday.month == getMonth(6, curMonday) ?
-                "${monthsOfYear[curMonday.month]}, ${curMonday.year}" :
-                "${monthsOfYear[curMonday.month]} - ${monthsOfYear[getMonth(6, curMonday)]}, ${curMonday.year}") : 
-                "${monthsOfYear[curMonday.month]}, ${curMonday.year} - ${monthsOfYear[getMonth(6, curMonday)]}, ${getYear(6, curMonday)}",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                SizedBox(width: AppSizes.smallPadding),
+                ElevatedButton( 
+                  onPressed: () => _nextWeek(),
+                  style: ButtonStyles.primaryStyle,
+                  child: Icon(Icons.arrow_forward), 
                 ),
-              ),
+                SizedBox(width: AppSizes.smallPadding),
+                ElevatedButton(
+                  onPressed: () => _selectDate(context),
+                  style: ButtonStyles.primaryStyle,
+                  child: Text(
+                    curMonday.year == getYear(6, curMonday) ?
+                    (curMonday.month == getMonth(6, curMonday) ?
+                    "${monthsOfYear[curMonday.month]}, ${curMonday.year}" :
+                    "${monthsOfYear[curMonday.month]} - ${monthsOfYear[getMonth(6, curMonday)]}, ${curMonday.year}") : 
+                    "${monthsOfYear[curMonday.month]}, ${curMonday.year} - ${monthsOfYear[getMonth(6, curMonday)]}, ${getYear(6, curMonday)}",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),  
+                ),
+              ], 
             ),
           ),
         ],
