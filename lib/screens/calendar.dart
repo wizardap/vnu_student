@@ -58,31 +58,36 @@ class _CalendarScreenState extends State<CalendarScreen> {
       'date': DateTime(2024, 11, 27),
       'startHour': 10,
       'duration': 2,
-      'headerValue': "Sự kiện 1"
+      'headerValue': "Sự kiện 1",
+      'place' : "G2"
     }, // Event trên Wednesday
     {
       'date': DateTime(2024, 11, 29),
       'startHour': 15,
       'duration': 1,
-      'headerValue': "Sự kiện 2"
+      'headerValue': "Sự kiện 2",
+      'place' : "G3"
     }, // Event trên Friday
     {
       'date': DateTime(2024, 12, 06),
       'startHour': 8,
       'duration': 3,
-      'headerValue': "Sự kiện 3"
+      'headerValue': "Sự kiện 3",
+      'place' : "GĐ2"
     }, // Event trên // Event trên Friday
     {
       'date': DateTime(2024, 12, 05),
       'startHour': 8,
       'duration': 3,
-      'headerValue': "Sự kiện 4"
+      'headerValue': "Sự kiện 4",
+      'place' : "GĐ3"
     }, // Tuesday
     {
       'date': DateTime(2024, 11, 30),
       'startHour': 8,
       'duration': 3,
-      'headerValue': "Sự kiện 5 "
+      'headerValue': "Sự kiện 5",
+      'place' : "GĐ4"
     }, // Tuesd
   ];
 
@@ -194,17 +199,38 @@ class _CalendarScreenState extends State<CalendarScreen> {
         Positioned(
           top: event['startHour'] * hourCellHeight + hourCellHeight / 2.0,
           left: getDayIndex(event['date']) * (dayCellWidth + 10) + 10,
-          child: Container(
-            width: dayCellWidth - 10,
-            height: event['duration'] * hourCellHeight,
-            decoration: BoxDecoration(
-              color: AppColors.pieChartGreen3.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-            ),
-            child: Center(
-              child: Text(
-                event['headerValue'],
-                style: AppTextStyles.tableData,
+          child: GestureDetector(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('${event['headerValue']}'),
+                    content: Text('Thời gian bắt đầu: ${event['startHour']}:00\nThời lượng: ${event['duration']} giờ\nĐịa điểm: ${event['place']}'),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text('Close'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            child: Container(
+              width: dayCellWidth - 10,
+              height: event['duration'] * hourCellHeight,
+              decoration: BoxDecoration(
+                color: AppColors.pieChartGreen3.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(AppSizes.borderRadius),
+              ),
+              child: Center(
+                child: Text(
+                  event['headerValue'],
+                  style: AppTextStyles.tableData,
+                ),
               ),
             ),
           ),
