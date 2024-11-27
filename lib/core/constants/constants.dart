@@ -11,6 +11,7 @@ class AppColors {
   static const Color pieChartGreen2 = Color(0xCC32A44B); // Màu #32A44B, 80%
   static const Color pieChartGreen3 = Color(0xCC53C26B); // Màu #53C26B, 80%
   static const Color iconGray = Colors.grey; // Màu biểu tượng xám
+  static const Color primaryButtonColor = Color(0xDCAEE8);
 }
 
 // Font chữ
@@ -80,13 +81,34 @@ class AppTextStyles {
     fontSize: 16,
     color: AppColors.iconGray,
   );
+
+  static const TextStyle buttonText = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+    color: AppColors.textBlack,
+  );
 }
 
 // Kích thước & khoảng cách
 class AppSizes {
   static const double borderRadius = 12.0;
+  static const double buttonBorderRadius = 12.0;
   static const double padding = 16.0;
   static const double smallPadding = 8.0;
   static const double shadowBlurRadius = 8.0;
   static const double cardElevation = 4.0;
+}
+
+class ButtonStyles {
+  static ButtonStyle get primaryStyle { 
+    return ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primaryButtonColor,
+            fixedSize: const Size(double.infinity,50),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppSizes.buttonBorderRadius),
+            ),
+            padding: const EdgeInsets.all(AppSizes.padding),
+            iconColor: AppColors.textBlack,
+          );
+  }
 }

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import '../core/constants/constants.dart';
 
@@ -11,8 +13,6 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   final ScrollController _horizontalScrollController = ScrollController();
   final ScrollController _horizontalHeaderScrollController = ScrollController();
-  DateTime _selectedDate = DateTime.now();
-  DateTime curMonday = DateTime.now(); // Ngày đầu tuần hiện tại
   final double hourCellHeight = 60; // Chiều cao mỗi ô giờ
   final double dayCellWidth = 120; // Chiều rộng mỗi ô ngày
   final List<String> daysOfWeek = [
@@ -26,45 +26,75 @@ class _CalendarScreenState extends State<CalendarScreen> {
   ];
   final List<String> monthsOfYear = [
     "None",
-    "January",
-    "February",
-    "March",
-    "April",
+    // "January",
+    // "February",
+    // "March",
+    // "April",
+    // "May",
+    // "June",
+    // "July",
+    // "August",
+    // "September",
+    // "October",
+    // "November",
+    // "December"
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
     "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec"
   ];
 
   // Dữ liệu sự kiện (dayIndex, startHour, duration)
-  List<Map<String, dynamic>> events = [
+  final List<Map<String, dynamic>> sampleEvents = [
     {
-      'dayIndex': 2,
+      'date': DateTime(2024, 11, 27),
       'startHour': 10,
       'duration': 2,
       'headerValue': "Sự kiện 1"
     }, // Event trên Wednesday
     {
-      'dayIndex': 4,
+      'date': DateTime(2024, 11, 29),
       'startHour': 15,
       'duration': 1,
       'headerValue': "Sự kiện 2"
     }, // Event trên Friday
     {
-      'dayIndex': 1,
+      'date': DateTime(2024, 12, 06),
       'startHour': 8,
       'duration': 3,
       'headerValue': "Sự kiện 3"
-    }, // Event trên Tuesday
+    }, // Event trên // Event trên Friday
+    {
+      'date': DateTime(2024, 12, 05),
+      'startHour': 8,
+      'duration': 3,
+      'headerValue': "Sự kiện 4"
+    }, // Tuesday
+    {
+      'date': DateTime(2024, 11, 30),
+      'startHour': 8,
+      'duration': 3,
+      'headerValue': "Sự kiện 5 "
+    }, // Tuesd
   ];
+
+  List<Map<String, dynamic>> events = [];
+
+  DateTime _selectedDate = DateTime.now();
+  DateTime curMonday = DateTime.now(); // Ngày đầu tuần hiện tại
 
   @override
   void initState() {
     super.initState();
+    refreshCalendar();
     _horizontalScrollController.addListener(() {
       if (_horizontalHeaderScrollController.offset !=
           _horizontalScrollController.offset) {
@@ -87,6 +117,23 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return date.subtract(Duration(days: difference));
   }
 
+  // Cập nhật dữ liệu tuần mỗi khi thay đổi xảy ra
+  void refreshCalendar() {
+    curMonday = getStartOfWeek(_selectedDate);
+    getEventOccurInThisWeek();
+  }
+
+  // Lấy các sự kiện xảy ra trong tuần
+  void getEventOccurInThisWeek() {
+    events = [];
+    for (var event in sampleEvents) {
+      if (event['date'].isAfter(curMonday.subtract(const Duration(days: 1))) &&
+          event['date'].isBefore(curMonday.add(const Duration(days: 7)))) {
+        events.add(event);
+      }
+    }
+  }
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -97,23 +144,31 @@ class _CalendarScreenState extends State<CalendarScreen> {
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
-        curMonday = getStartOfWeek(_selectedDate);
+        refreshCalendar();
       });
     }
   }
 
   void _previousWeek() {
     setState(() {
-      _selectedDate = _selectedDate.subtract(Duration(days: 7));
-      curMonday = curMonday.subtract(Duration(days: 7));
+      _selectedDate = _selectedDate.subtract(const Duration(days: 7));
+      curMonday = curMonday.subtract(const Duration(days: 7));
+      refreshCalendar();
     });
   }
 
   void _nextWeek() {
     setState(() {
-      _selectedDate = _selectedDate.add(Duration(days: 7));
-      curMonday = curMonday.add(Duration(days: 7));
+      _selectedDate = _selectedDate.add(const Duration(days: 7));
+      curMonday = curMonday.add(const Duration(days: 7));
+      refreshCalendar();
     });
+  }
+
+  // Lấy chỉ số ngày trong tuần của một ngày
+  // Ví dụ: Monday -> 1, Tuesday -> 2, ..., Sunday -> 7
+  int getDayIndex(DateTime date) {
+    return date.difference(curMonday).inDays + 1;
   }
 
   // Lấy ngày của một ngày trong tuần
@@ -129,6 +184,35 @@ class _CalendarScreenState extends State<CalendarScreen> {
   // Lấy năm của một ngày trong tuần
   int getYear(int dayIndex, DateTime curMonday) {
     return curMonday.add(Duration(days: dayIndex)).year;
+  }
+
+  List<Widget> getEventWidget() {
+    List<Widget> eventWidgets = [];
+
+    for (var event in events) {
+      eventWidgets.add(
+        Positioned(
+          top: event['startHour'] * hourCellHeight + hourCellHeight / 2.0,
+          left: getDayIndex(event['date']) * (dayCellWidth + 10) + 10,
+          child: Container(
+            width: dayCellWidth - 10,
+            height: event['duration'] * hourCellHeight,
+            decoration: BoxDecoration(
+              color: AppColors.pieChartGreen3.withOpacity(0.5),
+              borderRadius: BorderRadius.circular(AppSizes.borderRadius),
+            ),
+            child: Center(
+              child: Text(
+                event['headerValue'],
+                style: AppTextStyles.tableData,
+              ),
+            ),
+          ),
+        )
+      );
+    }
+
+    return eventWidgets;
   }
 
   @override
@@ -156,15 +240,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 ElevatedButton(
                   onPressed: () => _previousWeek(),
                   style: ButtonStyles.primaryStyle,
-                  child: Icon(Icons.arrow_back),
+                  child: const Icon(Icons.arrow_back),
                 ),
-                SizedBox(width: AppSizes.smallPadding),
+                const SizedBox(width: AppSizes.smallPadding),
                 ElevatedButton( 
                   onPressed: () => _nextWeek(),
                   style: ButtonStyles.primaryStyle,
-                  child: Icon(Icons.arrow_forward), 
+                  child: const Icon(Icons.arrow_forward), 
                 ),
-                SizedBox(width: AppSizes.smallPadding),
+                const SizedBox(width: AppSizes.smallPadding),
                 ElevatedButton(
                   onPressed: () => _selectDate(context),
                   style: ButtonStyles.primaryStyle,
@@ -174,10 +258,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     "${monthsOfYear[curMonday.month]}, ${curMonday.year}" :
                     "${monthsOfYear[curMonday.month]} - ${monthsOfYear[getMonth(6, curMonday)]}, ${curMonday.year}") : 
                     "${monthsOfYear[curMonday.month]}, ${curMonday.year} - ${monthsOfYear[getMonth(6, curMonday)]}, ${getYear(6, curMonday)}",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: AppTextStyles.buttonText,
                   ),  
                 ),
               ], 
@@ -284,28 +365,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 );
               }),
             ),
-            for (var event in events)
-              Positioned(
-                top: event['startHour'] * hourCellHeight + hourCellHeight / 2.0,
-                left: event['dayIndex'] * (dayCellWidth + 10) + 10,
-                child: Container(
-                  width: dayCellWidth - 10,
-                  height: event['duration'] * hourCellHeight,
-                  decoration: BoxDecoration(
-                    color: AppColors.pieChartGreen3.withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-                  ),
-                  child: Center(
-                    child: Text(
-                      event['headerValue'],
-                      style: TextStyle(
-                        color: AppColors.textBlack,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+            ...getEventWidget(),
           ],
         ),
       ),
