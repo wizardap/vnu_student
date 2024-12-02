@@ -1,16 +1,13 @@
-// TODO Implement this library.
 import 'package:flutter/material.dart';
-import 'package:vnu_student/features/academic_results/screen/academic_results_screen.dart';
-import 'package:vnu_student/features/home/screens/home_screen.dart';
 
-class AskScreen extends StatefulWidget {
-  const AskScreen({Key? key}) : super(key: key);
+class AskQuestionScreen extends StatefulWidget {
+  const AskQuestionScreen({Key? key}) : super(key: key);
 
   @override
-  State<AskScreen> createState() => _AskScreenState();
+  State<AskQuestionScreen> createState() => _AskQuestionScreenState();
 }
 
-class _AskScreenState extends State<AskScreen> {
+class _AskQuestionScreenState extends State<AskQuestionScreen> {
   bool isAskSelected = true;
 
   @override
@@ -55,10 +52,7 @@ class _AskScreenState extends State<AskScreen> {
             ],
           ),
           const SizedBox(height: 20),
-          // Display content based on selection
-          Expanded(
-            child: isAskSelected ? buildAskContent() : buildRegularQuestionContent(),
-          ),
+          isAskSelected ? buildAskContent() : buildRegularQuestionContent(),
         ],
       ),
     );
@@ -66,18 +60,20 @@ class _AskScreenState extends State<AskScreen> {
 
   // Content for "Ask"
   Widget buildAskContent() {
-    return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      children: [
-        const ListTile(
-          title: Text('Create a question'),
-          leading: Icon(Icons.add, color: Colors.green),
-        ),
-        const SizedBox(height: 20),
-        buildExpandableSection('In progress'),
-        const SizedBox(height: 10),
-        buildExpandableSection('Done'),
-      ],
+    return Expanded(
+      child: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        children: [
+          const ListTile(
+            title: Text('Create a question'),
+            leading: Icon(Icons.add, color: Colors.green),
+          ),
+          const SizedBox(height: 20),
+          buildExpandableSection('In progress'),
+          const SizedBox(height: 10),
+          buildExpandableSection('Done'),
+        ],
+      ),
     );
   }
 
@@ -87,9 +83,9 @@ class _AskScreenState extends State<AskScreen> {
       child: ExpansionTile(
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         children: List.generate(3, (index) {
-          return ListTile(
-            leading: const Icon(Icons.circle, size: 12),
-            title: Text('Item ${index + 1}'),
+          return const ListTile(
+            leading: Icon(Icons.circle, size: 12),
+            title: Text(''),
           );
         }),
       ),
@@ -98,38 +94,40 @@ class _AskScreenState extends State<AskScreen> {
 
   // Content for "Regular Question"
   Widget buildRegularQuestionContent() {
-    return Column(
-      children: [
-        // Search bar
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: TextField(
-            decoration: InputDecoration(
-              hintText: 'Search',
-              prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+    return Expanded(
+      child: Column(
+        children: [
+          // Search bar
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'Search',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
             ),
           ),
-        ),
-        // List of questions
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: 5,
-            itemBuilder: (context, index) {
-              return Card(
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: ListTile(
-                  title: Text('Question ${index + 1}'),
-                  subtitle: const Text('Answer: ____________________'),
-                ),
-              );
-            },
+          // List of questions
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: 5,
+              itemBuilder: (context, index) {
+                return Card(
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: ListTile(
+                    title: Text('Question: ___________________'),
+                    subtitle: Text('Answer: ____________________'),
+                  ),
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
