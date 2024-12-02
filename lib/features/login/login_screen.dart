@@ -33,7 +33,10 @@ class LoginScreen extends StatelessWidget {
               onPressed: () {
                 // Handle login logic
               },
-              child: Text("Login"),
+              child: Text("Login",
+                style: TextStyle(
+                    color: Colors.green
+                ),),
             ),
             TextButton(
               onPressed: () {
@@ -42,7 +45,10 @@ class LoginScreen extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => ForgotPasswordScreen()),
                 );
               },
-              child: Text("Forgot Password?"),
+              child: Text("Forgot Password?",
+                style: TextStyle(
+                color: Colors.green
+              ),),
             ),
             TextButton(
               onPressed: () {
@@ -51,7 +57,10 @@ class LoginScreen extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => RegisterScreen()),
                 );
               },
-              child: Text("Don't have an account? Register here."),
+              child: Text("Don't have an account? Register here.",
+                style: TextStyle(
+                    color: Colors.green
+                ),),
             ),
           ],
         ),

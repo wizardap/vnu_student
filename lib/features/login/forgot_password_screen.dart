@@ -5,7 +5,10 @@ class ForgotPasswordScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Forgot Password"),
+        title: Text("Forgot Password",
+          style: TextStyle(
+              color: Colors.green
+          ),),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -23,7 +26,10 @@ class ForgotPasswordScreen extends StatelessWidget {
               onPressed: () {
                 // Handle password reset logic
               },
-              child: Text("Reset Password"),
+              child: Text("Reset Password",
+                style: TextStyle(
+                    color: Colors.green
+                ),),
             ),
           ],
         ),

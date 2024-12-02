@@ -5,7 +5,10 @@ class RegisterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Register"),
+        title: Text("Register",
+          style: TextStyle(
+              color: Colors.green
+          ),),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -38,7 +41,10 @@ class RegisterScreen extends StatelessWidget {
               onPressed: () {
                 // Handle registration logic
               },
-              child: Text("Register"),
+              child: Text("Register",
+                style: TextStyle(
+                    color: Colors.green
+                ),),
             ),
           ],
         ),
