@@ -1,5 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:vnu_student/features/academic_results/screen/academic_results_screen.dart';
+import 'package:vnu_student/features/administrative_gate/screens/administrative_gate_screen.dart';
+import 'package:vnu_student/features/ask/screens/ask_screen.dart';
+import 'package:vnu_student/features/calendar/screens/calendar_screen.dart';
+import 'package:vnu_student/features/home/screens/home_screen.dart';
 import 'package:vnu_student/features/user_manual/screens/user_manual_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -13,11 +18,11 @@ class _MainScreenState extends State<MainScreen> {
   bool _isMenuOpen = false;
 
   final List<Widget> _screens = [
-    Center(child: Text('Home Screen')),
-    Center(child: Text('Academic Results Screen')),
-    Center(child: Text('Calendar Screen')),
-    Center(child: Text('Ask Screen')),
-    Center(child: Text('Administrative Gate Screen')),
+    HomeScreen(),
+    AcademicResultsScreen(),
+    CalendarScreen(),
+    AskScreen(),
+    AdministrativeGateScreen(),
   ];
 
   void _toggleMenu() {
