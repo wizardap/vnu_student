@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "116530889383",
+    "project_id": "vnu-student",
+    "storage_bucket": "vnu-student.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:116530889383:android:aa7b4fd752465798c15182",
+        "android_client_info": {
+          "package_name": "com.examle.vnu_student"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqjqFzt6p3n96_tBmWjgYaYJuZvy9QhOE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
