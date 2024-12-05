@@ -101,7 +101,7 @@ class AppSizes {
 class ButtonStyles {
   static ButtonStyle get primaryStyle { 
     return ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primaryButtonColor,
+            backgroundColor: AppColors.lightGray,
             fixedSize: const Size(double.infinity,50),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppSizes.buttonBorderRadius),

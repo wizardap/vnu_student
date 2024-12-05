@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:vnu_student/core/constants/constants.dart';
+import 'package:vnu_student/features/calendar/model/event_getter.dart';
+import 'package:vnu_student/features/calendar/model/datetime_helper.dart';
 
 
 class CalendarScreen extends StatefulWidget {
@@ -54,48 +56,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
   ];
 
   // Dữ liệu sự kiện (dayIndex, startHour, duration)
-  final List<Map<String, dynamic>> sampleEvents = [
-    {
-      'date': DateTime(2024, 11, 27),
-      'startHour': 10,
-      'duration': 2,
-      'headerValue': "Sự kiện 1",
-      'place' : "G2"
-    }, // Event trên Wednesday
-    {
-      'date': DateTime(2024, 11, 29),
-      'startHour': 15,
-      'duration': 1,
-      'headerValue': "Sự kiện 2",
-      'place' : "G3"
-    }, // Event trên Friday
-    {
-      'date': DateTime(2024, 12, 06),
-      'startHour': 8,
-      'duration': 3,
-      'headerValue': "Sự kiện 3",
-      'place' : "GĐ2"
-    }, // Event trên // Event trên Friday
-    {
-      'date': DateTime(2024, 12, 05),
-      'startHour': 8,
-      'duration': 3,
-      'headerValue': "Sự kiện 4",
-      'place' : "GĐ3"
-    }, // Tuesday
-    {
-      'date': DateTime(2024, 11, 30),
-      'startHour': 8,
-      'duration': 3,
-      'headerValue': "Sự kiện 5",
-      'place' : "GĐ4"
-    }, // Tuesd
-  ];
-
+  // [
+  //   {
+  //     'date': DateTime(2024, 11, 27),
+  //     'startHour': 10,
+  //     'duration': 2,
+  //     'headerValue': "Sự kiện 1",
+  //     'place' : "G2"
+  //   }, // Event trên Wednesday
+  // ];
   List<Map<String, dynamic>> events = [];
-
-  DateTime _selectedDate = DateTime.now();
-  DateTime curMonday = DateTime.now(); // Ngày đầu tuần hiện tại
+  EventGetter eventGetter = EventGetter();
+  DatetimeHelper dateTimeHelper = DatetimeHelper();
 
   @override
   void initState() {
@@ -117,39 +89,23 @@ class _CalendarScreenState extends State<CalendarScreen> {
     super.dispose();
   }
 
-  DateTime getStartOfWeek(DateTime date) {
-    // Tính toán ngày đầu tuần (thứ Hai)
-    int difference = date.weekday - DateTime.monday;
-    return date.subtract(Duration(days: difference));
-  }
-
   // Cập nhật dữ liệu tuần mỗi khi thay đổi xảy ra
   void refreshCalendar() {
-    curMonday = getStartOfWeek(_selectedDate);
-    getEventOccurInThisWeek();
-  }
-
-  // Lấy các sự kiện xảy ra trong tuần
-  void getEventOccurInThisWeek() {
-    events = [];
-    for (var event in sampleEvents) {
-      if (event['date'].isAfter(curMonday.subtract(const Duration(days: 1))) &&
-          event['date'].isBefore(curMonday.add(const Duration(days: 7)))) {
-        events.add(event);
-      }
-    }
+    events = eventGetter.getEvents(
+      dateTimeHelper.getMonday(), dateTimeHelper.getWeekEnd() 
+    );
   }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate,
+      initialDate: dateTimeHelper.getSelectedDate(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
     );
-    if (picked != null && picked != _selectedDate) {
+    if (picked != null && picked != dateTimeHelper.getSelectedDate()) {
       setState(() {
-        _selectedDate = picked;
+        dateTimeHelper.set(picked);
         refreshCalendar();
       });
     }
@@ -157,39 +113,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   void _previousWeek() {
     setState(() {
-      _selectedDate = _selectedDate.subtract(const Duration(days: 7));
-      curMonday = curMonday.subtract(const Duration(days: 7));
+      dateTimeHelper.set(
+        dateTimeHelper.getSelectedDate().subtract(const Duration(days: 7))
+      );
       refreshCalendar();
     });
   }
 
   void _nextWeek() {
     setState(() {
-      _selectedDate = _selectedDate.add(const Duration(days: 7));
-      curMonday = curMonday.add(const Duration(days: 7));
+      dateTimeHelper.set(
+        dateTimeHelper.getSelectedDate().add(const Duration(days: 7))
+      );
       refreshCalendar();
     });
-  }
-
-  // Lấy chỉ số ngày trong tuần của một ngày
-  // Ví dụ: Monday -> 1, Tuesday -> 2, ..., Sunday -> 7
-  int getDayIndex(DateTime date) {
-    return date.difference(curMonday).inDays + 1;
-  }
-
-  // Lấy ngày của một ngày trong tuần
-  int getDay(int dayIndex, DateTime curMonday) {
-    return curMonday.add(Duration(days: dayIndex)).day;
-  }
-
-  // Lấy tháng của một ngày trong tuần
-  int getMonth(int dayIndex, DateTime curMonday) {
-    return curMonday.add(Duration(days: dayIndex)).month;
-  }
-
-  // Lấy năm của một ngày trong tuần
-  int getYear(int dayIndex, DateTime curMonday) {
-    return curMonday.add(Duration(days: dayIndex)).year;
   }
 
   List<Widget> getEventWidget() {
@@ -199,7 +136,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       eventWidgets.add(
         Positioned(
           top: event['startHour'] * hourCellHeight + hourCellHeight / 2.0,
-          left: getDayIndex(event['date']) * (dayCellWidth + 10) + 10,
+          left: DatetimeHelper.getDayIndex(event['date']) * (dayCellWidth + 10) + 10,
           child: GestureDetector(
             onTap: () {
               showDialog(
@@ -280,11 +217,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   onPressed: () => _selectDate(context),
                   style: ButtonStyles.primaryStyle,
                   child: Text(
-                    curMonday.year == getYear(6, curMonday) ?
-                    (curMonday.month == getMonth(6, curMonday) ?
-                    "${monthsOfYear[curMonday.month]}, ${curMonday.year}" :
-                    "${monthsOfYear[curMonday.month]} - ${monthsOfYear[getMonth(6, curMonday)]}, ${curMonday.year}") : 
-                    "${monthsOfYear[curMonday.month]}, ${curMonday.year} - ${monthsOfYear[getMonth(6, curMonday)]}, ${getYear(6, curMonday)}",
+                    dateTimeHelper.allSameYear() ?
+                    (dateTimeHelper.allSameMonth() ?
+                    "${monthsOfYear[dateTimeHelper.getMonday().month]}, ${dateTimeHelper.getMonday().year}" :
+                    "${monthsOfYear[dateTimeHelper.getMonday().month]} - ${monthsOfYear[DatetimeHelper.getMonth(6, dateTimeHelper.getMonday())]}, ${dateTimeHelper.getMonday().year}") : 
+                    "${monthsOfYear[dateTimeHelper.getMonday().month]}, ${dateTimeHelper.getMonday().year} - ${monthsOfYear[DatetimeHelper.getMonth(6, dateTimeHelper.getMonday())]}, ${DatetimeHelper.getYear(6, dateTimeHelper.getMonday())}",
                     style: AppTextStyles.buttonText,
                   ),  
                 ),
@@ -323,7 +260,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     ),
                     child: Center(
                       child: Text(
-                        '${daysOfWeek[index]}\n${getDay(index, curMonday)}',
+                        '${daysOfWeek[index]}\n${DatetimeHelper.getDay(index, dateTimeHelper.getMonday())}',
                         textAlign: TextAlign.center,
                         style: AppTextStyles.tableHeader,
                       ),
