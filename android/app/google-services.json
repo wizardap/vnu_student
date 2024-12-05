@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:116530889383:android:aa7b4fd752465798c15182",
+        "mobilesdk_app_id": "1:116530889383:android:621268d4dd826f5dc15182",
         "android_client_info": {
-          "package_name": "com.examle.vnu_student"
+          "package_name": "com.example.vnu_student"
         }
       },
       "oauth_client": [],
