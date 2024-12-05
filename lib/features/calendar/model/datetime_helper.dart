@@ -6,8 +6,7 @@ class DatetimeHelper {
   DateTime curMonday = DateTime.now(); // Ngày đầu tuần hiện tại
 
   DatetimeHelper() {
-    _selectedDate = DateTime.now();
-    curMonday = DateTime.now(); // Ngày đầu tuần hiện tại
+    set(DateTime.now());
   }
 
   // Lấy ngày được chọn
@@ -43,9 +42,14 @@ class DatetimeHelper {
   }
 
   // Lấy chỉ số ngày trong tuần của một ngày
-  // Ví dụ: Monday -> 1, Tuesday -> 2, ..., Sunday -> 7
+  // Ví dụ: Monday -> 0, Tuesday -> 1, ..., Sunday -> 6
   static int getDayIndex(DateTime date) {
-    return date.weekday - DateTime.monday + 1;
+    return date.weekday - DateTime.monday;
+  }
+
+  // Lấy giờ của một ngày
+  static int getHour(DateTime date) {
+    return date.hour;
   }
 
   // Lấy ngày của một ngày trong tuần

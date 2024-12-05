@@ -58,8 +58,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   // Dữ liệu sự kiện (dayIndex, startHour, duration)
   // [
   //   {
-  //     'date': DateTime(2024, 11, 27),
-  //     'startHour': 10,
+  //     'date': DateTime(2024, 11, 27, 10),
   //     'duration': 2,
   //     'headerValue': "Sự kiện 1",
   //     'place' : "G2"
@@ -135,7 +134,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     for (var event in events) {
       eventWidgets.add(
         Positioned(
-          top: event['startHour'] * hourCellHeight + hourCellHeight / 2.0,
+          top: DatetimeHelper.getHour(event['date']) * hourCellHeight + hourCellHeight / 2.0,
           left: DatetimeHelper.getDayIndex(event['date']) * (dayCellWidth + 10) + 10,
           child: GestureDetector(
             onTap: () {
@@ -144,7 +143,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 builder: (BuildContext context) {
                   return AlertDialog(
                     title: Text('${event['headerValue']}'),
-                    content: Text('Thời gian bắt đầu: ${event['startHour']}:00\nThời lượng: ${event['duration']} giờ\nĐịa điểm: ${event['place']}'),
+                    content: Text('Thời gian bắt đầu: ${DatetimeHelper.getHour(event['date'])}:00\nThời lượng: ${event['duration']} giờ\nĐịa điểm: ${event['place']}'),
                     actions: <Widget>[
                       TextButton(
                         child: Text('Close'),
