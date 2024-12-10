@@ -1,1 +1,25 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"vnu-student","appId":"1:116530889383:android:aa7b4fd752465798c15182","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"vnu-student","configurations":{"android":"1:116530889383:android:aa7b4fd752465798c15182","ios":"1:116530889383:ios:a191e650641c345bc15182","macos":"1:116530889383:ios:a191e650641c345bc15182","web":"1:116530889383:web:fac30c66c3c3d13bc15182","windows":"1:116530889383:web:28b156f693507fc4c15182"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "vnu-student",
+          "appId": "1:116530889383:android:aa7b4fd752465798c15182",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "vnu-student",
+          "configurations": {
+            "android": "1:116530889383:android:aa7b4fd752465798c15182",
+            "ios": "1:116530889383:ios:a191e650641c345bc15182",
+            "macos": "1:116530889383:ios:a191e650641c345bc15182",
+            "web": "1:116530889383:web:fac30c66c3c3d13bc15182",
+            "windows": "1:116530889383:web:28b156f693507fc4c15182"
+          }
+        }
+      }
+    }
+  }
+}
