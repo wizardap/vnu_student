@@ -1,7 +1,6 @@
-// TODO Implement this library.
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:vnu_student/features/academic_results/screen/academic_results_screen.dart';
-import 'package:vnu_student/features/home/screens/home_screen.dart';
+import 'package:vnu_student/core/constants/constants.dart';
 
 class AskScreen extends StatefulWidget {
   const AskScreen({Key? key}) : super(key: key);
@@ -12,12 +11,14 @@ class AskScreen extends StatefulWidget {
 
 class _AskScreenState extends State<AskScreen> {
   bool isAskSelected = true;
+  final TextEditingController _questionController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Ask Question'),
+        titleTextStyle: AppTextStyles.appBarTitle,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,7 +38,10 @@ class _AskScreenState extends State<AskScreen> {
                   backgroundColor: isAskSelected ? Colors.green : Colors.grey,
                   shape: const StadiumBorder(),
                 ),
-                child: const Text('Ask'),
+                child: const Text(
+                  'Ask',
+                  style: TextStyle(color: Colors.black),
+                ),
               ),
               const SizedBox(width: 10),
               ElevatedButton(
@@ -50,14 +54,19 @@ class _AskScreenState extends State<AskScreen> {
                   backgroundColor: !isAskSelected ? Colors.green : Colors.grey,
                   shape: const StadiumBorder(),
                 ),
-                child: const Text('Regular Question'),
+                child: const Text(
+                  'Regular Question',
+                  style: TextStyle(color: Colors.black),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 20),
           // Display content based on selection
           Expanded(
-            child: isAskSelected ? buildAskContent() : buildRegularQuestionContent(),
+            child: isAskSelected
+                ? buildAskContent()
+                : buildRegularQuestionContent(),
           ),
         ],
       ),
@@ -69,31 +78,111 @@ class _AskScreenState extends State<AskScreen> {
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       children: [
-        const ListTile(
-          title: Text('Create a question'),
-          leading: Icon(Icons.add, color: Colors.green),
+        ListTile(
+          title: const Text('Create a question'),
+          leading: const Icon(Icons.add, color: Colors.green),
+          onTap: () => _showCreateQuestionDialog(),
         ),
         const SizedBox(height: 20),
-        buildExpandableSection('In progress'),
-        const SizedBox(height: 10),
-        buildExpandableSection('Done'),
+        buildInProgressSection(),
       ],
     );
   }
 
-  // Expandable section for items
-  Widget buildExpandableSection(String title) {
-    return Card(
-      child: ExpansionTile(
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        children: List.generate(3, (index) {
-          return ListTile(
-            leading: const Icon(Icons.circle, size: 12),
-            title: Text('Item ${index + 1}'),
-          );
-        }),
-      ),
+  // Firestore stream for in-progress questions
+  Widget buildInProgressSection() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('questions')
+          .where('status', isEqualTo: 'in-progress')
+          .orderBy('created_at', descending: true)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          return const Center(child: Text('Error fetching questions.'));
+        }
+
+        final questions = snapshot.data?.docs ?? [];
+
+        if (questions.isEmpty) {
+          return const Center(child: Text('No questions in progress.'));
+        }
+
+        return ListView.builder(
+          shrinkWrap: true,
+          itemCount: questions.length,
+          itemBuilder: (context, index) {
+            final questionData = questions[index];
+            final questionText = questionData['question'];
+
+            return Card(
+              child: ListTile(
+                title: Text(questionText),
+                trailing: IconButton(
+                  icon: const Icon(Icons.check, color: Colors.green),
+                  onPressed: () {
+                    markQuestionAsDone(questionData.id);
+                  },
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
+  }
+
+  // Mark a question as done
+  Future<void> markQuestionAsDone(String questionId) async {
+    await FirebaseFirestore.instance
+        .collection('questions')
+        .doc(questionId)
+        .update({'status': 'done'});
+  }
+
+  // Dialog to create a new question
+  void _showCreateQuestionDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Create a Question'),
+          content: TextField(
+            controller: _questionController,
+            decoration: const InputDecoration(hintText: 'Enter your question'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _addQuestionToFirestore();
+                Navigator.pop(context);
+              },
+              child: const Text('Submit'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Add a new question to Firestore
+  Future<void> _addQuestionToFirestore() async {
+    if (_questionController.text.isNotEmpty) {
+      await FirebaseFirestore.instance.collection('questions').add({
+        'question': _questionController.text,
+        'status': 'in-progress',
+        'created_at': FieldValue.serverTimestamp(),
+      });
+      _questionController.clear();
+    }
   }
 
   // Content for "Regular Question"
