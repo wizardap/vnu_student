@@ -1,67 +1,117 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const AdministrativeGateApp());
-}
-
-class AdministrativeGateApp extends StatelessWidget {
-  const AdministrativeGateApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: AdministrativeGateScreen(),
-    );
-  }
-}
-
-void click(BuildContext context){
-    showDialog(context: context,
-     builder: (BuildContext context) {
+void click(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
       return AlertDialog(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20), // Bo góc cho toàn bộ AlertDialog
+          borderRadius: BorderRadius.circular(15), // Bo góc cho toàn bộ AlertDialog
         ),
-          content: Container(
-              decoration: BoxDecoration(
-                color: Colors.white, // Màu nền
-                borderRadius: BorderRadius.circular(10), // Bo góc
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5), // Màu đổ bóng
-                    spreadRadius: 2, // Độ lan tỏa
-                    blurRadius: 5, // Độ mờ của bóng
-                    offset: Offset(0, 3), // Hướng bóng (x, y)
-                  ),
-                ],
+        elevation: 10, // Tạo hiệu ứng độ cao để nổi bật
+        content: Container(
+          padding: const EdgeInsets.all(20), // Padding xung quanh nội dung
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15), // Bo góc cho Container
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3), // Nhẹ nhàng hơn cho bóng đổ
+                spreadRadius: 2,
+                blurRadius: 10,
+                offset: Offset(0, 5),
               ),
-              child: TextField(
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // Làm cho column không chiếm toàn bộ chiều cao
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // TextField phần yêu cầu tạo request
+              TextField(
                 decoration: InputDecoration(
-                  hintText: 'Create a request', // Văn bản gợi ý
-                  hintStyle: TextStyle(color: Colors.grey), // Màu chữ gợi ý
-                  prefixIcon: Icon(Icons.add, color: Color(0xFF13511C)), // Icon ở bên trái
+                  hintText: 'Create a request',
+                  hintStyle: TextStyle(color: Colors.grey),
+                  prefixIcon: Icon(Icons.add, color: Color(0xFF13511C)),
                   border: OutlineInputBorder(
-                    borderSide: BorderSide.none, // Xóa viền mặc định
-                    borderRadius: BorderRadius.circular(20), // Bo góc viền
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15), // Khoảng cách bên trong
+                  contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                 ),
               ),
+              SizedBox(height: 20),
+              
+              // Phần upload tài liệu
+              GestureDetector(
+                onTap: () async {
+                  FilePickerResult? result = await FilePicker.platform.pickFiles();
+                  if (result != null) {
+                    // Nếu có file được chọn, bạn có thể xử lý ở đây
+                    String fileName = result.files.single.name;
+                    print("File selected: $fileName");
+                    // Hiển thị tên file cho người dùng
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('File selected: $fileName')),
+                    );
+                  } else {
+                    // Không có file nào được chọn
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('No file selected')),
+                    );
+                  }
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: Color(0xFF13511C),
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.3),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.upload_file, color: Colors.white),
+                      SizedBox(width: 10),
+                      Text(
+                        'Upload Document',
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            child: Text(
+              "Send",
+              style: TextStyle(
+                color: Color(0xFF13511C), // Màu nút phù hợp với icon
+                fontWeight: FontWeight.bold, // Làm đậm chữ
+              ),
             ),
-            actions: [
-            TextButton(
-              child: Text("Send"),
-              onPressed: () {
-                Navigator.of(context).pop(); // Đóng dialog
-              },
-            ),
-          ],
+            onPressed: () {
+              Navigator.of(context).pop(); // Đóng dialog
+            },
+          ),
+        ],
       );
-     }
-     );
+    },
+  );
 }
+
 
 class AdministrativeGateScreen extends StatelessWidget {
   @override
@@ -133,10 +183,18 @@ class AdministrativeGateScreen extends StatelessWidget {
             // Requests Status List
             Expanded(
               child: ListView(
+                padding: const EdgeInsets.all(8.0),
                 children: [
-                  _buildRequestStatusTile('In progress', 4),
+                  BuildRequestStatusTile(
+                    title: 'In progress',
+                    counts: 4,
+                  ),
                   const SizedBox(height: 30),
-                  _buildRequestStatusTile('Done', 5),
+                  BuildRequestStatusTile(
+                    title: 'Done',
+                    counts: 5,
+                  ),
+
                 ],
               ),
             ),
@@ -146,62 +204,88 @@ class AdministrativeGateScreen extends StatelessWidget {
     );
   }
 }
-  Widget _buildRequestStatusTile(String title, int itemCount) {
-  return Theme(
-    data: ThemeData().copyWith(dividerColor: Colors.transparent), // Tắt divider toàn bộ
-    child: ExpansionTile(
-      title: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-        decoration: BoxDecoration(
-          color: const Color(0xFF13511C),
-          borderRadius: BorderRadius.circular(20.0),
-        ),
-        child: Text(
-          title,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        ),
-      ),
-      iconColor: const Color.fromRGBO(211, 158, 84, 1),
-      collapsedIconColor: const Color.fromRGBO(211, 158, 84, 1),
-      children: List.generate(
-        itemCount,
-        (index) => Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-          margin: const EdgeInsets.only(bottom: 8.0),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(8.0),
-            border: Border.all(
-              color: Colors.grey,
-              width: 1,
+
+class BuildRequestStatusTile extends StatefulWidget {
+  final String title;
+  final int counts;
+
+  const BuildRequestStatusTile({
+    super.key,
+    required this.title,
+    required this.counts,
+  });
+
+  @override
+  State<BuildRequestStatusTile> createState() => _BuildRequestStatusTileState();
+}
+
+class _BuildRequestStatusTileState extends State<BuildRequestStatusTile> {
+  bool isExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      margin: const EdgeInsets.symmetric(vertical: 6.0),
+      child: Column(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: isExpanded ? Colors.red[300] : Colors.grey[200], // Nền chỉ cho title và icon
+              borderRadius: BorderRadius.circular(12.0),
             ),
-          ),
-          child: Row(
-            children: [
-              const CircleAvatar(
-                radius: 5,
-                backgroundColor: Colors.black,
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  title + index.toString(),
-                  style: const TextStyle(
-                    color: Colors.black87,
-                    fontSize: 15,
-                  ),
+            child: ListTile(
+              title: Text(
+                widget.title,
+                style: TextStyle(
+                  color: isExpanded ? Colors.white : Colors.black87,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            ],
-            
+              trailing: Icon(
+                isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                color: isExpanded ? Colors.white : Colors.black54,
+              ),
+              onTap: () {
+                setState(() {
+                  isExpanded = !isExpanded;
+                });
+              },
+            ),
           ),
-          
+          if (isExpanded)
+  ListView.builder(
+    shrinkWrap: true, // Để tránh lỗi layout
+    physics: const NeverScrollableScrollPhysics(), // Ngăn ListView cuộn
+    itemCount: 10,
+    itemBuilder: (context, index) {
+      return Container(
+        padding: const EdgeInsets.only(left: 20.0),
+        margin: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center, // Căn giữa dấu đầu dòng và văn bản
+          children: [
+            const Icon(
+              Icons.fiber_manual_record, // Dấu đầu dòng
+              size: 8, // Kích thước dấu đầu dòng
+              color: Colors.black54, // Màu dấu đầu dòng
+            ),
+            const SizedBox(width: 12.0), // Khoảng cách giữa dấu đầu dòng và nội dung
+            Expanded(
+              child: Text(
+                'Test ${index + 1}',
+                style: const TextStyle(color: Colors.black),
+              ),
+            ),
+          ],
         ),
+      );
+    },
+  ),
+
+        ],
       ),
-    ),
-  );
+
+    );
+  }
 }
