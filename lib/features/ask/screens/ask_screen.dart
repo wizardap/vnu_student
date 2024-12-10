@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:vnu_student/core/constants/constants.dart';
+import 'package:file_picker/file_picker.dart';
 
 class AskScreen extends StatefulWidget {
   const AskScreen({Key? key}) : super(key: key);
@@ -19,6 +20,9 @@ class _AskScreenState extends State<AskScreen> {
       appBar: AppBar(
         title: const Text('Ask Question'),
         titleTextStyle: AppTextStyles.appBarTitle,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        toolbarHeight: 60, // Đặt chiều cao AppBar để không chiếm nhiều không gian
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,19 +79,36 @@ class _AskScreenState extends State<AskScreen> {
 
   // Content for "Ask"
   Widget buildAskContent() {
-    return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      children: [
-        ListTile(
-          title: const Text('Create a question'),
-          leading: const Icon(Icons.add, color: Colors.green),
-          onTap: () => _showCreateQuestionDialog(),
+  return ListView(
+    padding: const EdgeInsets.symmetric(horizontal: 16),
+    children: [
+      ListTile(
+        title: const Text('Create a question'),
+        leading: const Icon(Icons.add, color: Colors.green),
+        onTap: () => _showCreateQuestionDialog(),
+      ),
+      const SizedBox(height: 20),
+      // Requests Status List
+      Expanded(
+        child: ListView(
+          padding: const EdgeInsets.all(8.0),
+          children: [
+            BuildRequestStatusTile(
+              title: 'In progress',
+              counts: 4,
+            ),
+            const SizedBox(height: 30),
+            BuildRequestStatusTile(
+              title: 'Done',
+              counts: 5,
+            ),
+
+          ],
         ),
-        const SizedBox(height: 20),
-        buildInProgressSection(),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
 
   // Firestore stream for in-progress questions
   Widget buildInProgressSection() {
@@ -219,6 +240,91 @@ class _AskScreenState extends State<AskScreen> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class BuildRequestStatusTile extends StatefulWidget {
+  final String title;
+  final int counts;
+
+  const BuildRequestStatusTile({
+    super.key,
+    required this.title,
+    required this.counts,
+  });
+
+  @override
+  State<BuildRequestStatusTile> createState() => _BuildRequestStatusTileState();
+}
+
+class _BuildRequestStatusTileState extends State<BuildRequestStatusTile> {
+  bool isExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      margin: const EdgeInsets.symmetric(vertical: 6.0),
+      child: Column(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: isExpanded ? Colors.red[300] : Colors.grey[200], // Nền chỉ cho title và icon
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            child: ListTile(
+              title: Text(
+                widget.title,
+                style: TextStyle(
+                  color: isExpanded ? Colors.white : Colors.black87,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              trailing: Icon(
+                isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                color: isExpanded ? Colors.white : Colors.black54,
+              ),
+              onTap: () {
+                setState(() {
+                  isExpanded = !isExpanded;
+                });
+              },
+            ),
+          ),
+          if (isExpanded)
+  ListView.builder(
+    shrinkWrap: true, // Để tránh lỗi layout
+    physics: const NeverScrollableScrollPhysics(), // Ngăn ListView cuộn
+    itemCount: 10,
+    itemBuilder: (context, index) {
+      return Container(
+        padding: const EdgeInsets.only(left: 20.0),
+        margin: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center, // Căn giữa dấu đầu dòng và văn bản
+          children: [
+            const Icon(
+              Icons.fiber_manual_record, // Dấu đầu dòng
+              size: 8, // Kích thước dấu đầu dòng
+              color: Colors.black54, // Màu dấu đầu dòng
+            ),
+            const SizedBox(width: 12.0), // Khoảng cách giữa dấu đầu dòng và nội dung
+            Expanded(
+              child: Text(
+                'Test ${index + 1}',
+                style: const TextStyle(color: Colors.black),
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  ),
+
+        ],
+      ),
+
     );
   }
 }
