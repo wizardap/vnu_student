@@ -20,7 +20,7 @@ class EventGetter {
     {
       'date': DateTime(2024, 12, 06, 8),
       'duration': 3,
-      'headerValue': "Sự kiện 3",
+      'headerValue': "Sự kiện 3, tên rất dài không biết nó có xuống dòng không",
       'place': "GĐ2"
     }, // Event trên // Event trên Friday
     {
