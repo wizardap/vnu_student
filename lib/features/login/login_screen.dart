@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'register_screen.dart';
 import 'forgot_password_screen.dart';
+import 'package:vnu_student/features/main_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -32,6 +33,10 @@ class LoginScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 // Handle login logic
+                Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => MainScreen()),
+                );
               },
               child: Text("Login",
                 style: TextStyle(

@@ -12,7 +12,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Simulate a loading process (e.g., fetching data, initializing services)
     _navigateToLogin();
   }
 
@@ -27,21 +26,21 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // You can customize the splash screen appearance here
+
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            // Example: App logo
-            Icon(
-              Icons.flutter_dash,
-              size: 100,
-              color: Colors.blue,
+            //App logo
+            Image.asset(
+              'lib/assets/images/logo_UET.png',
+              width: 100,
+              height: 100,
             ),
             SizedBox(height: 20),
-            // Example: App name
+            //App name
             Text(
-              'My Flutter App',
+              'UET Student App',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
