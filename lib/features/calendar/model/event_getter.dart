@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 class EventGetter {
@@ -57,10 +58,29 @@ class EventGetter {
     return events;
   }
 
+  String? _getCurrentUID() {
+    // Lấy người dùng hiện tại
+    User? user = FirebaseAuth.instance.currentUser;
+
+    // Kiểm tra nếu người dùng đã đăng nhập
+    if (user != null) {
+      return user.uid; // Trả về UID
+    } else {
+      return null; // Không có người dùng nào
+    }
+  }
+
   // Lấy các sự kiện trong khoảng thời gian từ startDate đến endDate
   List<Map<String, dynamic>> getEventsFromFirebase(DateTime startDate, DateTime endDate) {
     List<Map<String, dynamic>> events = [];
-    FirebaseFirestore.instance.collection('events').get().then((QuerySnapshot querySnapshot) {
+    String? userId = _getCurrentUID();
+    if (userId == null) {
+      return events;
+    }
+
+    FirebaseFirestore.instance.collection('events').
+    where('userId', isEqualTo: userId).
+    get().then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
         print(doc["date"]);
         if (doc["date"].toDate().isAfter(startDate.subtract(const Duration(days: 1))) &&
