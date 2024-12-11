@@ -68,15 +68,81 @@ class _CalendarScreenState extends State<CalendarScreen> {
   EventGetter eventGetter = EventGetter();
   DatetimeHelper dateTimeHelper = DatetimeHelper();
 
+  bool _isAdjusting = false;
+  ScrollController activeController = ScrollController();
+  double getAdjustedHorizontalScroll(double offset) {
+    // Tính toán phần tử gần nhất
+    final int nearestIndex = (offset / (dayCellWidth + 10)).round();
+    final double targetOffset = nearestIndex * (dayCellWidth + 10);
+
+    return targetOffset;
+  }
+
+  void _adjustScrollOnEnd() async {
+    if (_isAdjusting) {
+      print('Scrolling!!!');
+    }
+    if (_isAdjusting) return;
+
+    print('Start!!!');
+
+    if (!activeController.position.isScrollingNotifier.value) {
+      // Khi người dùng thả tay, tự động điều chỉnh
+      print('Start Scroll!!!');
+      _isAdjusting = true;
+      double newOffset = getAdjustedHorizontalScroll(activeController.offset);
+      _horizontalHeaderScrollController.animateTo(
+        newOffset,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+      );
+      _horizontalScrollController.animateTo(
+        newOffset,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+      );
+
+      await Future.delayed(const Duration(milliseconds: 200), () {
+        _isAdjusting = false;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     refreshCalendar();
     _horizontalScrollController.addListener(() {
-      if (_horizontalHeaderScrollController.offset !=
-          _horizontalScrollController.offset) {
-        _horizontalHeaderScrollController
-            .jumpTo(_horizontalScrollController.offset);
+      if (_horizontalScrollController.position.isScrollingNotifier.value) {
+        activeController = _horizontalScrollController;
+      }
+      double newOffset = _horizontalScrollController.offset;
+      // if (!_horizontalScrollController.position.isScrollingNotifier.value) {
+      //   newOffset = getAdjustedHorizontalScroll(newOffset);
+      //   _horizontalScrollController.jumpTo(newOffset);
+      // }
+
+      if (!_isAdjusting && _horizontalHeaderScrollController.offset != newOffset) {
+        _horizontalHeaderScrollController.jumpTo(newOffset);
+      } else {
+        _adjustScrollOnEnd();
+      }
+    });
+
+    _horizontalHeaderScrollController.addListener(() {
+      if (_horizontalHeaderScrollController.position.isScrollingNotifier.value) {
+        activeController = _horizontalHeaderScrollController;
+      }
+      double newOffset = _horizontalHeaderScrollController.offset;
+      // if (!_horizontalHeaderScrollController.position.isScrollingNotifier.value) {
+      //   newOffset = getAdjustedHorizontalScroll(newOffset);
+      //   _horizontalHeaderScrollController.jumpTo(newOffset);
+      // }
+
+      if (!_isAdjusting && _horizontalScrollController.offset != newOffset) {
+        _horizontalScrollController.jumpTo(newOffset);
+      } else {
+        _adjustScrollOnEnd();
       }
     });
   }
@@ -163,10 +229,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 color: AppColors.pieChartGreen3.withOpacity(0.5),
                 borderRadius: BorderRadius.circular(AppSizes.borderRadius),
               ),
-              child: Center(
-                child: Text(
-                  event['headerValue'],
-                  style: AppTextStyles.tableData,
+              child: Padding(
+                padding: const EdgeInsets.all(5),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start, // Align to the left
+                  children: [
+                    Text(
+                      event['headerValue'],
+                      style: AppTextStyles.buttonText,
+                    ),
+                    Text(
+                      '${DatetimeHelper.getHour(event['date'])}:00 - ${DatetimeHelper.getHour(event['date']) + event['duration']}:00',
+                      style: AppTextStyles.tableData,
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -184,50 +260,57 @@ class _CalendarScreenState extends State<CalendarScreen> {
       appBar: AppBar(
         title: const Text('Calendar'),
         titleTextStyle: AppTextStyles.appBarTitle,
+        backgroundColor: AppColors.backgroundColor, 
       ),
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              _buildSetUpParamHeader(),
-              _buildHeader(daysOfWeek, dayCellWidth),
-              _buildCalendarContent(
-                  hourCellHeight, dayCellWidth, daysOfWeek, events),
-            ],
-          ),
-          Positioned(
-            top: 10,
-            left: 10,
-            child: Row(
-              children: [
-                ElevatedButton(
-                  onPressed: () => _previousWeek(),
-                  style: ButtonStyles.primaryStyle,
-                  child: const Icon(Icons.arrow_back),
-                ),
-                const SizedBox(width: AppSizes.smallPadding),
-                ElevatedButton( 
-                  onPressed: () => _nextWeek(),
-                  style: ButtonStyles.primaryStyle,
-                  child: const Icon(Icons.arrow_forward), 
-                ),
-                const SizedBox(width: AppSizes.smallPadding),
-                ElevatedButton(
-                  onPressed: () => _selectDate(context),
-                  style: ButtonStyles.primaryStyle,
-                  child: Text(
-                    dateTimeHelper.allSameYear() ?
-                    (dateTimeHelper.allSameMonth() ?
-                    "${monthsOfYear[dateTimeHelper.getMonday().month]}, ${dateTimeHelper.getMonday().year}" :
-                    "${monthsOfYear[dateTimeHelper.getMonday().month]} - ${monthsOfYear[DatetimeHelper.getMonth(6, dateTimeHelper.getMonday())]}, ${dateTimeHelper.getMonday().year}") : 
-                    "${monthsOfYear[dateTimeHelper.getMonday().month]}, ${dateTimeHelper.getMonday().year} - ${monthsOfYear[DatetimeHelper.getMonth(6, dateTimeHelper.getMonday())]}, ${DatetimeHelper.getYear(6, dateTimeHelper.getMonday())}",
-                    style: AppTextStyles.buttonText,
-                  ),  
-                ),
-              ], 
+      body: Padding(
+        padding: const EdgeInsets.only(right: AppSizes.smallPadding), // Space from screen edges
+        child: Stack(
+          children: [
+            Container(
+              color: AppColors.backgroundColor, // Set background color here
             ),
-          ),
-        ],
+            Column(
+              children: [
+                _buildSetUpParamHeader(),
+                _buildHeader(daysOfWeek, dayCellWidth),
+                _buildCalendarContent(
+                    hourCellHeight, dayCellWidth, daysOfWeek, events),
+              ],
+            ),
+            Positioned(
+              top: 10,
+              left: 10,
+              child: Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: () => _previousWeek(),
+                    style: ButtonStyles.primaryStyle,
+                    child: const Icon(Icons.arrow_back),
+                  ),
+                  const SizedBox(width: AppSizes.smallPadding),
+                  ElevatedButton( 
+                    onPressed: () => _nextWeek(),
+                    style: ButtonStyles.primaryStyle,
+                    child: const Icon(Icons.arrow_forward), 
+                  ),
+                  const SizedBox(width: AppSizes.smallPadding),
+                  ElevatedButton(
+                    onPressed: () => _selectDate(context),
+                    style: ButtonStyles.primaryStyle,
+                    child: Text(
+                      dateTimeHelper.allSameYear() ?
+                      (dateTimeHelper.allSameMonth() ?
+                      "${monthsOfYear[dateTimeHelper.getMonday().month]}, ${dateTimeHelper.getMonday().year}" :
+                      "${monthsOfYear[dateTimeHelper.getMonday().month]} - ${monthsOfYear[DatetimeHelper.getMonth(6, dateTimeHelper.getMonday())]}, ${dateTimeHelper.getMonday().year}") : 
+                      "${monthsOfYear[dateTimeHelper.getMonday().month]}, ${dateTimeHelper.getMonday().year} - ${monthsOfYear[DatetimeHelper.getMonth(6, dateTimeHelper.getMonday())]}, ${DatetimeHelper.getYear(6, dateTimeHelper.getMonday())}",
+                      style: AppTextStyles.buttonText,
+                    ),  
+                  ),
+                ], 
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -322,7 +405,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   height: hourCellHeight * 24 + hourCellHeight / 2.0,
                   margin: const EdgeInsets.all(5),
                   decoration: BoxDecoration(
-                    color: AppColors.iconGray.withOpacity(0.5),
+                    color: AppColors.iconGray.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(AppSizes.borderRadius),
                   ),
                 );
@@ -340,7 +423,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return Container(
       width: 60,
       height: 80,
-      color: Theme.of(context).scaffoldBackgroundColor,
+      // color: Theme.of(context).scaffoldBackgroundColor,
+      color: AppColors.backgroundColor,
     );
   }
 }
