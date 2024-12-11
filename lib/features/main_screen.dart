@@ -1,11 +1,13 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:vnu_student/features/academic_results/screen/academic_results_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:vnu_student/features/academic_results/screen/academic_result_screen.dart';
 import 'package:vnu_student/features/administrative_gate/screens/administrative_gate_screen.dart';
 import 'package:vnu_student/features/ask/screens/ask_screen.dart';
 import 'package:vnu_student/features/calendar/screens/calendar_screen.dart';
 import 'package:vnu_student/features/home/screens/home_screen.dart';
 import 'package:vnu_student/features/user_manual/screens/user_manual_screen.dart';
+import 'package:vnu_student/features/login/login_screen.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -14,7 +16,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
-  int? _previousIndex; // Lưu trạng thái màn hình trước khi mở menu
+  int? _previousIndex;
   bool _isMenuOpen = false;
 
   final List<Widget> _screens = [
@@ -28,14 +30,12 @@ class _MainScreenState extends State<MainScreen> {
   void _toggleMenu() {
     setState(() {
       if (_isMenuOpen) {
-        // Đóng menu và quay lại màn hình trước đó
         _isMenuOpen = false;
         if (_previousIndex != null) {
           _currentIndex = _previousIndex!;
-          _previousIndex = null; // Xóa trạng thái sau khi quay lại
+          _previousIndex = null;
         }
       } else {
-        // Mở menu và lưu trạng thái màn hình hiện tại
         _previousIndex = _currentIndex;
         _isMenuOpen = true;
         _currentIndex = 5; // Màn hình menu
@@ -48,12 +48,19 @@ class _MainScreenState extends State<MainScreen> {
       context,
       MaterialPageRoute(builder: (context) => UserManualScreen()),
     ).then((_) {
-      // Quay lại menu khi đóng màn hình hướng dẫn
       setState(() {
         _isMenuOpen = true;
-        _currentIndex = 5; // Đặt lại menu là màn hình hiện tại
+        _currentIndex = 5;
       });
     });
+  }
+
+  void _logout() async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+    );
   }
 
   @override
@@ -64,10 +71,7 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Nội dung chính
           _screens[_currentIndex != 5 ? _currentIndex : _previousIndex ?? 0],
-
-          // Overlay làm mờ
           if (_isMenuOpen)
             GestureDetector(
               onTap: _toggleMenu,
@@ -75,12 +79,10 @@ class _MainScreenState extends State<MainScreen> {
                 duration: Duration(milliseconds: 300),
                 color: Colors.black.withOpacity(0.5),
                 child: Container(
-                  color: Colors.black.withOpacity(0.2), // Hiệu ứng đơn giản hơn
+                  color: Colors.black.withOpacity(0.2),
                 ),
               ),
             ),
-
-          // Menu trượt từ phải
           AnimatedPositioned(
             duration: Duration(milliseconds: 400),
             curve: Curves.fastOutSlowIn,
@@ -105,7 +107,6 @@ class _MainScreenState extends State<MainScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Header menu
                     Container(
                       padding: EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -125,25 +126,34 @@ class _MainScreenState extends State<MainScreen> {
                             child: Icon(Icons.person, color: Colors.green),
                           ),
                           SizedBox(width: 16),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Hello, User",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                          Expanded(
+                            // Thêm Expanded để giới hạn chiều rộng
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Hello, ${FirebaseAuth.instance.currentUser?.email ?? 'User'}",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  overflow: TextOverflow
+                                      .ellipsis, // Cắt bớt nội dung dài
+                                  maxLines: 1, // Chỉ hiển thị 1 dòng
                                 ),
-                              ),
-                              Text(
-                                "user@example.com",
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 14,
+                                Text(
+                                  "Welcome!",
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 14,
+                                  ),
+                                  overflow: TextOverflow
+                                      .ellipsis, // Cắt bớt nếu quá dài
+                                  maxLines: 1, // Chỉ hiển thị 1 dòng
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -165,14 +175,12 @@ class _MainScreenState extends State<MainScreen> {
                           _buildMenuItem(
                             icon: Icons.book,
                             text: 'User Manual',
-                            onTap: () {
-                              _navigateToUserManual();
-                            },
+                            onTap: _navigateToUserManual,
                           ),
                           _buildMenuItem(
                             icon: Icons.logout,
                             text: 'Logout',
-                            onTap: _toggleMenu,
+                            onTap: _logout,
                           ),
                         ],
                       ),
@@ -184,8 +192,6 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ],
       ),
-
-      // Thanh điều hướng
       bottomNavigationBar: AnimatedContainer(
         duration: Duration(milliseconds: 300),
         color: _isMenuOpen ? Colors.black.withOpacity(0.1) : Colors.white,
@@ -198,7 +204,7 @@ class _MainScreenState extends State<MainScreen> {
               setState(() {
                 _currentIndex = index;
                 _isMenuOpen = false;
-                _previousIndex = null; // Xóa trạng thái nếu đổi màn hình
+                _previousIndex = null;
               });
             }
           },

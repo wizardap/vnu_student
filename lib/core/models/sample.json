@@ -1,0 +1,91 @@
+{
+    "users": [
+      {
+        "user_id": "DX13bCuO8aWLKkFCTSc1ex8E8jn1",
+        "name": "Nguyen Van A",
+        "email": "nguyenvana@example.com",
+        "student_id": "22021149",
+        "profile_image_url": "https://example.com/profile.jpg",
+        "academic_results": [
+          {
+            "semester": "Học kỳ I 2024-2025",
+            "gpa": 3.5,
+            "trainingPoints": 85,
+            "grades": {
+              "A+": 2,
+              "A": 3,
+              "B+": 1
+            },
+            "subjects": [
+              {"stt": 1, "name": "Data Structures", "credits": 3, "grade": "A+"},
+              {"stt": 2, "name": "Algorithms", "credits": 4, "grade": "A"},
+              {"stt": 3, "name": "Operating Systems", "credits": 3, "grade": "B+"}
+            ]
+          }
+        ],
+        "calendar": [
+          {
+            "date": "2024-10-01",
+            "time": "08:00 AM",
+            "event": "Math Lecture",
+            "location": "Room 101, Building A",
+            "type": "Lecture"
+          },
+          {
+            "date": "2024-10-15",
+            "time": "10:00 AM",
+            "event": "Physics Exam",
+            "location": "Room 202, Building B",
+            "type": "Exam"
+          }
+        ],
+        "administrative_gate": [
+          {
+            "request_type": "Document Request",
+            "status": "Pending",
+            "details": "Request for a copy of academic transcript."
+          },
+          {
+            "request_type": "Course Withdrawal",
+            "status": "Completed",
+            "details": "Withdrawal from 'Advanced Math' course."
+          }
+        ],
+        "ask": [
+          {
+            "question": "How to register for a new course?",
+            "status": "Received",
+            "answer": "You can register through the academic portal."
+          },
+          {
+            "question": "What is the deadline for tuition fee payment?",
+            "status": "Completed",
+            "answer": "The deadline is Dec 1st."
+          }
+        ]
+      }
+    ],
+    "news_notifications": [
+      {
+        "type": "News",
+        "title": "New Semester Starts!",
+        "content": "Prepare for the upcoming semester."
+      },
+      {
+        "type": "Notification",
+        "title": "Tuition Fee Reminder",
+        "content": "Pay your tuition fee before Dec 1st."
+      }
+    ],
+    "faqs": [
+      {
+        "question": "How to reset my password?",
+        "answer": "Go to the login screen and click 'Forgot Password'."
+      },
+      {
+        "question": "How to view my grades?",
+        "answer": "Go to the Academic Results section in the app."
+      }
+    ]
+  }
+  

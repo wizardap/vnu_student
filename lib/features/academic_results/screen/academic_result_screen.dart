@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:vnu_student/core/constants/constants.dart';
+import '../models/academic_result_model.dart'; // Import model
 import '../widgets/overview_card.dart';
 import '../widgets/academic_transcript_table.dart';
 import 'package:fl_chart/fl_chart.dart'; // Để hiển thị Bar Chart trong pop-up
@@ -10,33 +12,24 @@ class AcademicResultsScreen extends StatefulWidget {
 }
 
 class _AcademicResultsScreenState extends State<AcademicResultsScreen> {
-  String _selectedSemester = "Học kỳ I 2024-2025";
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String _selectedSemester = "";
 
-  final List<String> _semesters = [
-    "Học kỳ I 2024-2025",
-    "Học kỳ II 2024-2025",
-    "Học kỳ I 2023-2024",
-  ];
-
-  final Map<String, dynamic> _data = {
-    "Học kỳ I 2024-2025": {
-      "gpa": 3.2,
-      "trainingPoints": 80,
-      "grades": {"A+": 15, "A": 10, "B+": 5},
-      "subjects": [
-        {"stt": 1, "name": "Tín hiệu và hệ thống", "credits": 3, "grade": "A"},
-        {"stt": 2, "name": "Toán rời rạc", "credits": 4, "grade": "A+"},
-        {"stt": 3, "name": "Hóa học đại cương", "credits": 3, "grade": "B+"},
-      ],
-    },
-  };
+  // Lấy dữ liệu từ Firestore
+  Stream<List<AcademicResult>> _getAcademicResults() {
+    final userId = "user_12345"; // Thay bằng ID người dùng thực tế
+    return _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('academic_results')
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => AcademicResult.fromFirestore(doc.data()))
+            .toList());
+  }
 
   @override
   Widget build(BuildContext context) {
-    final selectedData = _data[_selectedSemester];
-    final grades = selectedData["grades"];
-    final subjects = selectedData["subjects"];
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -47,53 +40,74 @@ class _AcademicResultsScreenState extends State<AcademicResultsScreen> {
         elevation: 0,
         toolbarHeight: AppSizes.padding * 3.75,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSizes.padding),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              SizedBox(height: AppSizes.padding),
+      body: StreamBuilder<List<AcademicResult>>(
+        stream: _getAcademicResults(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text("No academic results found."));
+          }
 
-              // Tiêu đề OverviewCard
-              Text(
-                "Overview",
-                style: AppTextStyles.header,
+          final academicResults = snapshot.data!;
+          _selectedSemester = _selectedSemester.isEmpty
+              ? academicResults.first.semester
+              : _selectedSemester;
+
+          final selectedResult = academicResults.firstWhere(
+            (result) => result.semester == _selectedSemester,
+            orElse: () => academicResults.first,
+          );
+
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSizes.padding),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(academicResults.map((e) => e.semester).toList()),
+                  SizedBox(height: AppSizes.padding),
+
+                  // OverviewCard
+                  Text(
+                    "Overview",
+                    style: AppTextStyles.header,
+                  ),
+                  SizedBox(height: AppSizes.smallPadding),
+                  OverviewCard(
+                    grades: selectedResult.grades,
+                    gpa: selectedResult.gpa,
+                    trainingPoints: selectedResult.trainingPoints,
+                    onTap: () {
+                      _showDetailedOverviewBottomSheet(
+                        context,
+                        selectedResult.grades,
+                        selectedResult.gpa,
+                        selectedResult.trainingPoints,
+                      );
+                    },
+                  ),
+
+                  SizedBox(height: AppSizes.padding),
+
+                  // Academic Transcript
+                  Text(
+                    "Academic Transcript",
+                    style: AppTextStyles.header,
+                  ),
+                  SizedBox(height: AppSizes.smallPadding),
+                  AcademicTranscriptTable(subjects: selectedResult.subjects),
+                ],
               ),
-              SizedBox(height: AppSizes.smallPadding),
-
-              // Sử dụng OverviewCard widget
-              OverviewCard(
-                grades: grades,
-                gpa: selectedData["gpa"],
-                trainingPoints: selectedData["trainingPoints"],
-                onTap: () {
-                  _showDetailedOverviewBottomSheet(context, grades,
-                      selectedData["gpa"], selectedData["trainingPoints"]);
-                },
-              ),
-
-              SizedBox(height: AppSizes.padding),
-
-              // Tiêu đề AcademicTranscriptTable
-              Text(
-                "Academic Transcript",
-                style: AppTextStyles.header,
-              ),
-              SizedBox(height: AppSizes.smallPadding),
-
-              // Sử dụng AcademicTranscriptTable widget
-              AcademicTranscriptTable(subjects: subjects),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  // Header chọn học kỳ
-  Widget _buildHeader() {
+  Widget _buildHeader(List<String> semesters) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -105,49 +119,31 @@ class _AcademicResultsScreenState extends State<AcademicResultsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "2024-2025",
+                  _selectedSemester.split(" ")[1],
                   style: AppTextStyles.header,
                 ),
                 Text(
-                  "Semester I",
+                  _selectedSemester.split(" ")[0],
                   style: AppTextStyles.subHeader,
                 ),
               ],
             ),
-            Container(
-              padding: EdgeInsets.symmetric(
-                  horizontal: AppSizes.smallPadding,
-                  vertical: AppSizes.smallPadding / 2),
-              decoration: BoxDecoration(
-                color: AppColors.lightGray,
-                borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: _selectedSemester,
-                  items: _semesters.map((semester) {
-                    return DropdownMenuItem(
-                      value: semester,
-                      child: Text(
-                        semester,
-                        style: AppTextStyles.dropdownItem,
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedSemester = value!;
-                    });
-                  },
-                  icon: Icon(
-                    Icons.arrow_drop_down,
-                    color: AppColors.textBlack,
-                    size: 24,
+            DropdownButton<String>(
+              value: _selectedSemester,
+              items: semesters.map((semester) {
+                return DropdownMenuItem(
+                  value: semester,
+                  child: Text(
+                    semester,
+                    style: AppTextStyles.dropdownItem,
                   ),
-                  dropdownColor: AppColors.lightGray,
-                  borderRadius: BorderRadius.circular(AppSizes.borderRadius),
-                ),
-              ),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedSemester = value!;
+                });
+              },
             ),
           ],
         ),
@@ -155,8 +151,8 @@ class _AcademicResultsScreenState extends State<AcademicResultsScreen> {
     );
   }
 
-  void _showDetailedOverviewBottomSheet(BuildContext context,
-      Map<String, int> grades, double gpa, int trainingPoints) {
+  void _showDetailedOverviewBottomSheet(
+      BuildContext context, Map<String, int> grades, double gpa, int trainingPoints) {
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
