@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 // Màu sắc
 class AppColors {
+  static const Color backgroundColor = Colors.white;
   static const Color primaryGreen = Color(0xFF13511C); // Màu xanh header bảng
   static const Color lightGray = Color(0xFFD9D9D9); // Màu xám nhạt
   static const Color shadowGray = Colors.black12; // Màu bóng mờ
