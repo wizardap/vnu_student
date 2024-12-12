@@ -257,6 +257,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.backgroundColor, // Thiết lập màu nền
       appBar: AppBar(
         title: const Text('Calendar'),
         titleTextStyle: AppTextStyles.appBarTitle,
@@ -323,7 +324,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           Container(
             width: 60, // Ô trống ở góc trên bên trái
             height: 80,
-            color: Theme.of(context).scaffoldBackgroundColor,
+            color: AppColors.backgroundColor,
           ),
           Expanded(
             child: SingleChildScrollView(
