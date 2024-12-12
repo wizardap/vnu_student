@@ -102,7 +102,9 @@ class _AskScreenState extends State<AskScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      body: Column(
+      body: Container(
+        color: Colors.white,
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 20),
@@ -122,6 +124,7 @@ class _AskScreenState extends State<AskScreen> {
           ),
         ],
       ),
+    ),
     );
   }
 
@@ -137,7 +140,7 @@ class _AskScreenState extends State<AskScreen> {
             ? AppColors.primaryGreen
             : AppColors.lightGray,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: BorderRadius.circular(18.0),
         ),
       ),
       child: Text(
@@ -282,6 +285,7 @@ Widget buildDoneSection() {
     context: context,
     builder: (context) {
       return AlertDialog(
+        backgroundColor: Colors.white,
         title: const Text('Create a Question'),
         content: TextField(
           controller: _questionController,

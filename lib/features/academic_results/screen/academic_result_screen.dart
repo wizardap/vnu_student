@@ -76,6 +76,7 @@ class _AcademicResultsScreenState extends State<AcademicResultsScreen> {
         elevation: 0,
         toolbarHeight: AppSizes.padding * 3.75,
       ),
+      //backgroundColor: Colors.white,
       body: Container(
         color: AppColors.backgroundColor,
         padding: const EdgeInsets.symmetric(horizontal: AppSizes.padding),

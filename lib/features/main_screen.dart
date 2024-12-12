@@ -10,6 +10,7 @@ import 'package:vnu_student/features/handbook/handbook_screen.dart';
 import 'package:vnu_student/features/home/screens/home_screen.dart';
 import 'package:vnu_student/features/user_manual/screens/user_manual_screen.dart';
 import 'package:vnu_student/features/login/login_screen.dart';
+import 'package:vnu_student/core/constants/constants.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -71,6 +72,7 @@ class _MainScreenState extends State<MainScreen> {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
 
     return Scaffold(
+      backgroundColor: AppColors.backgroundColor,
       body: Stack(
         children: [
           _screens[_currentIndex != 5 ? _currentIndex : _previousIndex ?? 0],
@@ -177,7 +179,7 @@ class _MainScreenState extends State<MainScreen> {
                           ),
                           _buildMenuItem(
                             icon: Icons.menu_book,
-                            text: 'HandBook',
+                            text: 'Handbook',
                             onTap: () {
                               Navigator.push(
                                 context,
@@ -207,9 +209,11 @@ class _MainScreenState extends State<MainScreen> {
         ],
       ),
       bottomNavigationBar: AnimatedContainer(
+        
         duration: Duration(milliseconds: 300),
         color: _isMenuOpen ? Colors.black.withOpacity(0.1) : Colors.white,
         child: BottomNavigationBar(
+          backgroundColor: Colors.white,
           currentIndex: _isMenuOpen ? 5 : _currentIndex,
           onTap: (index) {
             if (index == 5) {
@@ -250,7 +254,7 @@ class _MainScreenState extends State<MainScreen> {
               label: 'Menu',
             ),
           ],
-          selectedItemColor: Colors.green,
+          selectedItemColor: Color(0xFF13511C),
           unselectedItemColor: Colors.grey,
         ),
       ),
