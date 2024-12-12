@@ -6,6 +6,7 @@ import 'package:vnu_student/features/academic_results/screen/academic_result_scr
 import 'package:vnu_student/features/administrative_gate/screens/administrative_gate_screen.dart';
 import 'package:vnu_student/features/ask/screens/ask_screen.dart';
 import 'package:vnu_student/features/calendar/screens/calendar_screen.dart';
+import 'package:vnu_student/features/handbook/handbook_screen.dart';
 import 'package:vnu_student/features/home/screens/home_screen.dart';
 import 'package:vnu_student/features/user_manual/screens/user_manual_screen.dart';
 import 'package:vnu_student/features/login/login_screen.dart';
@@ -171,6 +172,17 @@ class _MainScreenState extends State<MainScreen> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => AboutScreen()),
+                              );
+                            },
+                          ),
+                          _buildMenuItem(
+                            icon: Icons.menu_book,
+                            text: 'HandBook',
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HandBookScreen()),
                               );
                             },
                           ),

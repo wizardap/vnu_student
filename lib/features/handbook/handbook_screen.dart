@@ -1,79 +1,66 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 Uri _url = Uri.parse('https://flutter.dev');
-void main() {
-  runApp(const MyApp());
-}
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: HandBook(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
-}
-class HandBook extends StatelessWidget {
+
+class HandBookScreen extends StatelessWidget {
   // Danh sách biểu tượng và nhãn
   final List<Map<String, dynamic>> items = [
-    {
-      'icon': Icons.history,
-      'label': 'Lịch sử và truyền thống',
-      'url': Uri.parse('http://handbook.uet.vnu.edu.vn/lịch%20sử%20-%20truyền%20thống/'),
-    },
-    {
-      'icon': Icons.attach_money,
-      'label': 'Chính sách học phí',
-      'url': Uri.parse('http://handbook.uet.vnu.edu.vn/Học phí - Chế độ chính sách/'),
-    },
-    {
-      'icon': Icons.card_giftcard,
-      'label': 'Chính sách học bổng',
-      'url': Uri.parse('http://handbook.uet.vnu.edu.vn/Học bổng/'),
-    },
-    {
-      'icon': Icons.rule,
-      'label': 'Nội quy và quy chế',
-      'url': Uri.parse('http://handbook.uet.vnu.edu.vn/Nội quy - quy chế/'),
-    },
-    {
-      'icon': Icons.attach_file,
-      'label': 'Cổng thông tin hữu ích',
-      'url': Uri.parse('http://handbook.uet.vnu.edu.vn/các cổng thông tin hữu ích/'),
-    },
-    {
-      'icon': Icons.work_outline,
-      'label': 'Việc làm',
-      'url': Uri.parse('https://vieclam.uet.vnu.edu.vn'), // Đảm bảo URL hợp lệ
-    },
-    {
-      'icon': Icons.handshake,
-      'label': 'Trao đổi sinh viên',
-      'url': Uri.parse('http://handbook.uet.vnu.edu.vn/Trao đổi sinh viên/'),
-    },
-    {
-      'icon': Icons.apartment,
-      'label': 'Nội trú',
-      'url': Uri.parse('http://handbook.uet.vnu.edu.vn/Ký túc xá/'),
-    },
-  ];
+  {
+    'icon': Icons.history,
+    'label': 'History and Tradition',
+    'url': Uri.parse('http://handbook.uet.vnu.edu.vn/lịch%20sử%20-%20truyền%20thống/'),
+  },
+  {
+    'icon': Icons.attach_money,
+    'label': 'Tuition Policy',
+    'url': Uri.parse('http://handbook.uet.vnu.edu.vn/Học phí - Chế độ chính sách/'),
+  },
+  {
+    'icon': Icons.card_giftcard,
+    'label': 'Scholarship Policy',
+    'url': Uri.parse('http://handbook.uet.vnu.edu.vn/Học bổng/'),
+  },
+  {
+    'icon': Icons.rule,
+    'label': 'Rules and Regulations',
+    'url': Uri.parse('http://handbook.uet.vnu.edu.vn/Nội quy - quy chế/'),
+  },
+  {
+    'icon': Icons.attach_file,
+    'label': 'Useful Information Portals',
+    'url': Uri.parse('http://handbook.uet.vnu.edu.vn/các cổng thông tin hữu ích/'),
+  },
+  {
+    'icon': Icons.work_outline,
+    'label': 'Job Opportunities',
+    'url': Uri.parse('https://vieclam.uet.vnu.edu.vn'), // Đảm bảo URL hợp lệ
+  },
+  {
+    'icon': Icons.handshake,
+    'label': 'Student Exchange',
+    'url': Uri.parse('http://handbook.uet.vnu.edu.vn/Trao đổi sinh viên/'),
+  },
+  {
+    'icon': Icons.apartment,
+    'label': 'Dormitory',
+    'url': Uri.parse('http://handbook.uet.vnu.edu.vn/Ký túc xá/'),
+  },
+];
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(
-          child: const Text(
+        title: Text(
             'Handbook',
             style: TextStyle(
               fontSize: 26,
               fontWeight: FontWeight.bold,
               color: Colors.black,
             ),
-          ),
         ),
         backgroundColor: Colors.white,
-        toolbarHeight: 30,
       ),
       backgroundColor: Colors.white,
       body: Container(
