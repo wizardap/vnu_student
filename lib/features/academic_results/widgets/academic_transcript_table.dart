@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vnu_student/core/constants/constants.dart';
-import '../models/academic_result_model.dart'; // Import AcademicResult và Subject
+import '../models/academic_result_model.dart'; // Import AcademicResult and Subject
 
 class AcademicTranscriptTable extends StatelessWidget {
   final List<Subject> subjects;
@@ -9,6 +9,19 @@ class AcademicTranscriptTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Automatically add serial numbers if not present
+    final List<Subject> subjectsWithIndex =
+        subjects.asMap().entries.map((entry) {
+      final index = entry.key + 1;
+      final subject = entry.value;
+      return Subject(
+        id: subject.id != 0 ? subject.id : index,
+        subjectName: subject.subjectName,
+        credit: subject.credit,
+        grade: subject.grade,
+      );
+    }).toList();
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return Padding(
@@ -30,8 +43,8 @@ class AcademicTranscriptTable extends StatelessWidget {
             child: Column(
               children: [
                 _buildHeader(),
-                ..._buildRows(context),
-                _buildSummary(),
+                ..._buildRows(context, subjectsWithIndex),
+                _buildSummary(subjectsWithIndex),
               ],
             ),
           ),
@@ -51,10 +64,10 @@ class AcademicTranscriptTable extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _buildHeaderCell("STT", flex: 2),
-          _buildHeaderCell("Tên môn học", flex: 4),
-          _buildHeaderCell("Số tín chỉ", flex: 2),
-          _buildHeaderCell("Điểm chữ", flex: 2),
+          _buildHeaderCell("No.", flex: 1),
+          _buildHeaderCell("Subject Name", flex: 4),
+          _buildHeaderCell("Credits", flex: 2),
+          _buildHeaderCell("Grade", flex: 2),
         ],
       ),
     );
@@ -68,25 +81,20 @@ class AcademicTranscriptTable extends StatelessWidget {
         child: Text(
           text,
           textAlign: TextAlign.center,
-          style: AppTextStyles.tableHeader,
+          style: AppTextStyles.tableHeader.copyWith(color: AppColors.white),
         ),
       ),
     );
   }
 
-  List<Widget> _buildRows(BuildContext context) {
-    return subjects.asMap().entries.map((entry) {
-      final isLast = entry.key == subjects.length - 1;
-      final subject = entry.value;
-
+  List<Widget> _buildRows(BuildContext context, List<Subject> subjects) {
+    return subjects.map((subject) {
+      final isLast = subject.id == subjects.length;
       return GestureDetector(
-        onTap: () {
-          // Hiển thị thông tin chi tiết môn học nếu cần
-          _showSubjectDetail(context, subject);
-        },
+        onTap: () => _showSubjectDetail(context, subject),
         child: Container(
           decoration: BoxDecoration(
-            color: entry.key % 2 == 0
+            color: subject.id % 2 == 0
                 ? AppColors.white
                 : AppColors.lightGray.withOpacity(0.5),
             borderRadius: isLast
@@ -98,9 +106,9 @@ class AcademicTranscriptTable extends StatelessWidget {
           ),
           child: Row(
             children: [
-              _buildDataCell(subject.stt.toString(), flex: 2),
-              _buildDataCell(subject.name, flex: 4),
-              _buildDataCell(subject.credits.toString(), flex: 2),
+              _buildDataCell(subject.id.toString(), flex: 1),
+              _buildDataCell(subject.subjectName, flex: 4),
+              _buildDataCell(subject.credit.toString(), flex: 2),
               _buildDataCell(subject.grade, flex: 2),
             ],
           ),
@@ -124,33 +132,30 @@ class AcademicTranscriptTable extends StatelessWidget {
     );
   }
 
-  Widget _buildSummary() {
-    final totalCredits = subjects.fold<int>(0, (sum, s) => sum + s.credits);
+  Widget _buildSummary(List<Subject> subjects) {
+    final totalCredits = subjects.fold<int>(0, (sum, s) => sum + s.credit);
     final totalSubjects = subjects.length;
 
     return Container(
       padding: EdgeInsets.all(AppSizes.padding),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [AppColors.primaryGreen, AppColors.lightGray],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
+        color: AppColors.primaryGreen,
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(AppSizes.borderRadius),
           bottomRight: Radius.circular(AppSizes.borderRadius),
         ),
+        border: Border.all(color: AppColors.shadowGray, width: 1.5),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            "Tổng môn: $totalSubjects",
-            style: AppTextStyles.tableHeader,
+            "Total Subjects: $totalSubjects",
+            style: AppTextStyles.tableHeader.copyWith(color: AppColors.white),
           ),
           Text(
-            "Tổng tín chỉ: $totalCredits",
-            style: AppTextStyles.tableHeader,
+            "Total Credits: $totalCredits",
+            style: AppTextStyles.tableHeader.copyWith(color: AppColors.white),
           ),
         ],
       ),
@@ -162,20 +167,20 @@ class AcademicTranscriptTable extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(subject.name),
+          title: Text(subject.subjectName),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("STT: ${subject.stt}"),
-              Text("Số tín chỉ: ${subject.credits}"),
-              Text("Điểm chữ: ${subject.grade}"),
+              Text("No.: ${subject.id}"),
+              Text("Credits: ${subject.credit}"),
+              Text("Grade: ${subject.grade}"),
             ],
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text("Đóng"),
+              child: Text("Close"),
             ),
           ],
         );

@@ -6,7 +6,7 @@ class OverviewCard extends StatelessWidget {
   final Map<String, int> grades;
   final double gpa;
   final int trainingPoints;
-  final VoidCallback onTap; // Hàm được gọi khi nhấn vào OverviewCard
+  final VoidCallback onTap;
 
   OverviewCard({
     required this.grades,
@@ -17,11 +17,25 @@ class OverviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Kiểm tra nếu grades rỗng
+    bool hasGrades = grades.isNotEmpty;
+
     Map<String, double> gradesDouble =
-        grades.map((key, value) => MapEntry(key, value.toDouble()));
+        hasGrades ? grades.map((key, value) => MapEntry(key, value.toDouble())) : {};
+
+    List<Color> gradeColors = [
+      AppColors.pieChartGreen1,
+      AppColors.pieChartGreen2,
+      AppColors.pieChartGreen3,
+      AppColors.pieChartGreen4,
+      AppColors.pieChartGreen5,
+      AppColors.pieChartGreen6,
+      AppColors.pieChartGreen7,
+      AppColors.pieChartGreen8,
+    ];
 
     return GestureDetector(
-      onTap: onTap, // Kích hoạt pop-up
+      onTap: onTap,
       child: Container(
         padding: EdgeInsets.all(AppSizes.padding),
         decoration: BoxDecoration(
@@ -41,23 +55,27 @@ class OverviewCard extends StatelessWidget {
           children: [
             Flexible(
               flex: 2,
-              child: PieChart(
-                dataMap: gradesDouble,
-                animationDuration: Duration(milliseconds: 800),
-                chartType: ChartType.disc,
-                chartRadius: MediaQuery.of(context).size.width / 3.5,
-                colorList: [
-                  AppColors.pieChartGreen1,
-                  AppColors.pieChartGreen2,
-                  AppColors.pieChartGreen3,
-                ],
-                chartValuesOptions: ChartValuesOptions(
-                  showChartValues: false,
-                ),
-                legendOptions: LegendOptions(
-                  showLegends: false,
-                ),
-              ),
+              child: hasGrades
+                  ? PieChart(
+                      dataMap: gradesDouble,
+                      animationDuration: Duration(milliseconds: 800),
+                      chartType: ChartType.disc,
+                      chartRadius: MediaQuery.of(context).size.width / 3.5,
+                      colorList: gradeColors,
+                      chartValuesOptions: ChartValuesOptions(
+                        showChartValues: false,
+                      ),
+                      legendOptions: LegendOptions(
+                        showLegends: false,
+                      ),
+                    )
+                  : Center(
+                      child: Text(
+                        "No grade data available"+grades.isNotEmpty.toString(),
+                        style: AppTextStyles.tableData,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
             ),
             SizedBox(width: AppSizes.smallPadding),
             Flexible(
@@ -74,30 +92,27 @@ class OverviewCard extends StatelessWidget {
                     style: AppTextStyles.tableData,
                   ),
                   SizedBox(height: AppSizes.smallPadding / 2),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: grades.entries.map((entry) {
-                      return Row(
-                        children: [
-                          Container(
-                            width: 12,
-                            height: 12,
-                            color: entry.key == "A+"
-                                ? AppColors.pieChartGreen1
-                                : entry.key == "A"
-                                    ? AppColors.pieChartGreen2
-                                    : AppColors.pieChartGreen3,
-                            margin:
-                                EdgeInsets.only(right: AppSizes.smallPadding),
-                          ),
-                          Text(
-                            "${entry.key} points: ${entry.value}",
-                            style: AppTextStyles.tableData,
-                          ),
-                        ],
-                      );
-                    }).toList(),
-                  ),
+                  if (hasGrades)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: grades.entries.map((entry) {
+                        int colorIndex = grades.keys.toList().indexOf(entry.key) % gradeColors.length;
+                        return Row(
+                          children: [
+                            Container(
+                              width: 12,
+                              height: 12,
+                              color: gradeColors[colorIndex],
+                              margin: EdgeInsets.only(right: AppSizes.smallPadding),
+                            ),
+                            Text(
+                              "${entry.key} points: ${entry.value}",
+                              style: AppTextStyles.tableData,
+                            ),
+                          ],
+                        );
+                      }).toList(),
+                    ),
                 ],
               ),
             ),

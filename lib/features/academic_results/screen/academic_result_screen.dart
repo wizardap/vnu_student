@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:vnu_student/core/constants/constants.dart';
@@ -14,18 +15,53 @@ class AcademicResultsScreen extends StatefulWidget {
 class _AcademicResultsScreenState extends State<AcademicResultsScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String _selectedSemester = "";
+  String? userId;
 
   // Lấy dữ liệu từ Firestore
   Stream<List<AcademicResult>> _getAcademicResults() {
-    final userId = "user_12345"; // Thay bằng ID người dùng thực tế
+    final User? user = FirebaseAuth.instance.currentUser;
+    final String userId = user?.uid ?? "";
+
     return _firestore
-        .collection('users')
-        .doc(userId)
         .collection('academic_results')
+        .where('userId', isEqualTo: userId)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => AcademicResult.fromFirestore(doc.data()))
-            .toList());
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) {
+            final data = doc.data() as Map<String, dynamic>?;
+
+            if (data == null) {
+              return null;
+            }
+
+            // Chuyển đổi subjects từ List<dynamic> sang List<Subject>
+            List<Subject> subjects = (data['subjects'] as List<dynamic>? ?? [])
+                .asMap()
+                .entries
+                .map((entry) {
+              final subjectData = entry.value as Map<String, dynamic>;
+              return Subject(
+                id: entry.key + 1,
+                subjectName: subjectData['subjectName'] as String? ?? "Unknown",
+                credit: subjectData['credit'] as int? ?? 0,
+                grade: subjectData['grade'] as String? ?? "N/A",
+              );
+            }).toList();
+
+            return AcademicResult(
+              semester: data['semester'] as String? ?? "Unknown",
+              gpa: (data['gpa'] as num?)?.toDouble() ?? 0.0,
+              trainingPoints: data['trainingPoints'] as int? ?? 0,
+              grades: Map<String, int>.from(data['gradeDistribution'] ?? {}),
+              subjects: subjects,
+              advice: List<String>.from(data['advice'] ?? []),
+            );
+          })
+          .where((result) => result != null)
+          .cast<AcademicResult>()
+          .toList();
+    });
   }
 
   @override
@@ -36,45 +72,51 @@ class _AcademicResultsScreenState extends State<AcademicResultsScreen> {
           "Study Results",
           style: AppTextStyles.appBarTitle,
         ),
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.backgroundColor,
         elevation: 0,
         toolbarHeight: AppSizes.padding * 3.75,
       ),
-      body: StreamBuilder<List<AcademicResult>>(
-        stream: _getAcademicResults(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text("No academic results found."));
-          }
+      body: Container(
+        color: AppColors.backgroundColor,
+        padding: const EdgeInsets.symmetric(horizontal: AppSizes.padding),
+        child: StreamBuilder<List<AcademicResult>>(
+          stream: _getAcademicResults(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
 
-          final academicResults = snapshot.data!;
-          _selectedSemester = _selectedSemester.isEmpty
-              ? academicResults.first.semester
-              : _selectedSemester;
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(
+                child: Text(
+                  "No academic results found.",
+                  style: AppTextStyles.tableData,
+                ),
+              );
+            }
 
-          final selectedResult = academicResults.firstWhere(
-            (result) => result.semester == _selectedSemester,
-            orElse: () => academicResults.first,
-          );
+            final academicResults = snapshot.data!;
+            _selectedSemester = _selectedSemester.isEmpty
+                ? academicResults.first.semester
+                : _selectedSemester;
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSizes.padding),
-            child: SingleChildScrollView(
+            final selectedResult = academicResults.firstWhere(
+              (result) => result.semester == _selectedSemester,
+              orElse: () => academicResults.first,
+            );
+
+            return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildHeader(academicResults.map((e) => e.semester).toList()),
                   SizedBox(height: AppSizes.padding),
 
-                  // OverviewCard
-                  Text(
-                    "Overview",
-                    style: AppTextStyles.header,
-                  ),
+                  // Tiêu đề "Overview"
+                  Text("Overview", style: AppTextStyles.header),
                   SizedBox(height: AppSizes.smallPadding),
+
+                  // OverviewCard
                   OverviewCard(
                     grades: selectedResult.grades,
                     gpa: selectedResult.gpa,
@@ -85,24 +127,23 @@ class _AcademicResultsScreenState extends State<AcademicResultsScreen> {
                         selectedResult.grades,
                         selectedResult.gpa,
                         selectedResult.trainingPoints,
+                        selectedResult.advice,
                       );
                     },
                   ),
-
                   SizedBox(height: AppSizes.padding),
 
-                  // Academic Transcript
-                  Text(
-                    "Academic Transcript",
-                    style: AppTextStyles.header,
-                  ),
+                  // Tiêu đề "Academic Transcript"
+                  Text("Academic Transcript", style: AppTextStyles.header),
                   SizedBox(height: AppSizes.smallPadding),
+
+                  // AcademicTranscriptTable
                   AcademicTranscriptTable(subjects: selectedResult.subjects),
                 ],
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
@@ -119,31 +160,49 @@ class _AcademicResultsScreenState extends State<AcademicResultsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _selectedSemester.split(" ")[1],
-                  style: AppTextStyles.header,
+                  _selectedSemester.split(" ")[0],
+                  style: AppTextStyles.header.copyWith(fontSize: 24),
                 ),
                 Text(
-                  _selectedSemester.split(" ")[0],
+                  "Semester ${_selectedSemester.split(" ")[1]}",
                   style: AppTextStyles.subHeader,
                 ),
               ],
             ),
-            DropdownButton<String>(
-              value: _selectedSemester,
-              items: semesters.map((semester) {
-                return DropdownMenuItem(
-                  value: semester,
-                  child: Text(
-                    semester,
-                    style: AppTextStyles.dropdownItem,
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: AppSizes.smallPadding,
+                vertical: AppSizes.smallPadding / 2,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.lightGray,
+                borderRadius: BorderRadius.circular(AppSizes.borderRadius),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.shadowGray,
+                    blurRadius: AppSizes.shadowBlurRadius,
+                    offset: Offset(0, 2),
                   ),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedSemester = value!;
-                });
-              },
+                ],
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: _selectedSemester,
+                  icon: Icon(Icons.arrow_drop_down, color: AppColors.iconGray),
+                  style: AppTextStyles.dropdownItem,
+                  items: semesters.map((semester) {
+                    return DropdownMenuItem(
+                      value: semester,
+                      child: Text(semester),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedSemester = value!;
+                    });
+                  },
+                ),
+              ),
             ),
           ],
         ),
@@ -152,7 +211,11 @@ class _AcademicResultsScreenState extends State<AcademicResultsScreen> {
   }
 
   void _showDetailedOverviewBottomSheet(
-      BuildContext context, Map<String, int> grades, double gpa, int trainingPoints) {
+      BuildContext context,
+      Map<String, int> grades,
+      double gpa,
+      int trainingPoints,
+      List<String> advice) {
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
@@ -161,18 +224,14 @@ class _AcademicResultsScreenState extends State<AcademicResultsScreen> {
       ),
       builder: (context) {
         return DefaultTabController(
-          length: 3, // Số lượng tab
+          length: 3,
           child: Container(
             height: MediaQuery.of(context).size.height * 0.8,
             padding: EdgeInsets.all(AppSizes.padding),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Tiêu đề và Tabs
-                Text(
-                  "Detailed Overview",
-                  style: AppTextStyles.header,
-                ),
+                Text("Detailed Overview", style: AppTextStyles.header),
                 SizedBox(height: AppSizes.smallPadding),
                 TabBar(
                   labelColor: AppColors.primaryGreen,
@@ -185,19 +244,12 @@ class _AcademicResultsScreenState extends State<AcademicResultsScreen> {
                   ],
                 ),
                 SizedBox(height: AppSizes.padding),
-
-                // Nội dung Tabs
                 Expanded(
                   child: TabBarView(
                     children: [
-                      // Tab Overview
                       _buildOverviewTab(gpa, trainingPoints),
-
-                      // Tab Details
                       _buildDetailsTab(grades),
-
-                      // Tab Suggestions
-                      _buildSuggestionsTab(),
+                      _buildSuggestionsTab(advice), // Truyền advice vào đây
                     ],
                   ),
                 ),
@@ -312,19 +364,30 @@ class _AcademicResultsScreenState extends State<AcademicResultsScreen> {
   }
 
 // Tab Suggestions
-  Widget _buildSuggestionsTab() {
+  Widget _buildSuggestionsTab(List<String> advice) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text("Suggestions for Improvement:", style: AppTextStyles.header),
         SizedBox(height: AppSizes.smallPadding),
-        Text(
-          "- Focus on subjects with lower grades.\n"
-          "- Attend extra classes or tutoring sessions.\n"
-          "- Maintain consistent study habits.\n"
-          "- Set a target GPA and track progress regularly.",
-          style: AppTextStyles.tableData,
-        ),
+        advice.isNotEmpty
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: advice.map((suggestion) {
+                  return Padding(
+                    padding:
+                        const EdgeInsets.only(bottom: AppSizes.smallPadding),
+                    child: Text(
+                      "- $suggestion",
+                      style: AppTextStyles.tableData,
+                    ),
+                  );
+                }).toList(),
+              )
+            : Text(
+                "No suggestions available.",
+                style: AppTextStyles.tableData,
+              ),
       ],
     );
   }

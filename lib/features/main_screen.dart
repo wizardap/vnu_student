@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:vnu_student/features/about/about_screen.dart';
 import 'package:vnu_student/features/academic_results/screen/academic_result_screen.dart';
 import 'package:vnu_student/features/administrative_gate/screens/administrative_gate_screen.dart';
 import 'package:vnu_student/features/ask/screens/ask_screen.dart';
@@ -163,14 +164,15 @@ class _MainScreenState extends State<MainScreen> {
                         padding: EdgeInsets.zero,
                         children: [
                           _buildMenuItem(
-                            icon: Icons.settings,
-                            text: 'Settings',
-                            onTap: _toggleMenu,
-                          ),
-                          _buildMenuItem(
                             icon: Icons.info,
                             text: 'About',
-                            onTap: _toggleMenu,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AboutScreen()),
+                              );
+                            },
                           ),
                           _buildMenuItem(
                             icon: Icons.book,

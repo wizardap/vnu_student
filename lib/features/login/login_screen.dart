@@ -14,7 +14,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  bool _isLoading = false; // Trạng thái xử lý đăng nhập
+  bool _isLoading = false; // Loading state for login process
 
   void _login() async {
     setState(() {
@@ -22,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      // Đăng nhập với Firebase Authentication
+      // Sign in with Firebase Authentication
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
@@ -32,20 +32,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (user != null) {
         if (!user.emailVerified) {
-          // Nếu email chưa được xác minh
-          await user.sendEmailVerification(); // Gửi email xác minh lại
+          // If email is not verified
+          await user.sendEmailVerification(); // Resend verification email
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(
                 content: Text(
-                  'Email chưa được xác minh. Vui lòng kiểm tra email của bạn và xác minh.',
+                  'Email is not verified. Please check your email and verify.',
                 ),
                 backgroundColor: Colors.red,
               ),
             );
         } else {
-          // Nếu email đã được xác minh, điều hướng đến MainScreen
+          // If email is verified, navigate to MainScreen
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => MainScreen()),
@@ -53,20 +53,20 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       }
     } on FirebaseAuthException catch (e) {
-      // Hiển thị thông báo lỗi
+      // Display error message
       String errorMessage;
       switch (e.code) {
         case 'user-not-found':
-          errorMessage = 'Tài khoản không tồn tại.';
+          errorMessage = 'Account does not exist.';
           break;
         case 'wrong-password':
-          errorMessage = 'Mật khẩu không đúng.';
+          errorMessage = 'Incorrect password.';
           break;
         case 'invalid-email':
-          errorMessage = 'Định dạng email không hợp lệ.';
+          errorMessage = 'Invalid email format.';
           break;
         default:
-          errorMessage = 'Đã xảy ra lỗi. Vui lòng thử lại.';
+          errorMessage = 'An error occurred. Please try again.';
       }
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
@@ -87,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Đăng nhập"),
+        title: Text("Login"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -106,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
             TextField(
               controller: _passwordController,
               decoration: InputDecoration(
-                labelText: 'Mật khẩu',
+                labelText: 'Password',
                 border: OutlineInputBorder(),
               ),
               obscureText: true,
@@ -117,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 : ElevatedButton(
                     onPressed: _login,
                     child: Text(
-                      "Đăng nhập",
+                      "Login",
                       style: TextStyle(color: Colors.white),
                     ),
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
@@ -130,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 );
               },
               child: Text(
-                "Quên mật khẩu?",
+                "Forgot Password?",
                 style: TextStyle(color: Colors.green),
               ),
             ),
@@ -142,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 );
               },
               child: Text(
-                "Chưa có tài khoản? Đăng ký ngay.",
+                "Don't have an account? Register now.",
                 style: TextStyle(color: Colors.green),
               ),
             ),

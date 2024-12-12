@@ -4,6 +4,7 @@ class AcademicResult {
   final int trainingPoints;
   final Map<String, int> grades;
   final List<Subject> subjects;
+  final List<String> advice;
 
   AcademicResult({
     required this.semester,
@@ -11,18 +12,24 @@ class AcademicResult {
     required this.trainingPoints,
     required this.grades,
     required this.subjects,
+    required this.advice,
   });
 
   // Chuyển đổi từ Firestore DocumentSnapshot sang AcademicResult
   factory AcademicResult.fromFirestore(Map<String, dynamic> data) {
+    List<Subject> subjectsList = (data['subjects'] as List)
+        .asMap()
+        .entries
+        .map((entry) => Subject.fromFirestore(entry.value, entry.key + 1))
+        .toList();
+
     return AcademicResult(
       semester: data['semester'] as String,
       gpa: (data['gpa'] as num).toDouble(),
       trainingPoints: data['trainingPoints'] as int,
-      grades: Map<String, int>.from(data['grades']),
-      subjects: (data['subjects'] as List)
-          .map((subject) => Subject.fromFirestore(subject))
-          .toList(),
+      grades: Map<String, int>.from(data['gradeDistribution']),
+      subjects: subjectsList,
+      advice: List<String>.from(data['advice']),
     );
   }
 
@@ -32,31 +39,32 @@ class AcademicResult {
       'semester': semester,
       'gpa': gpa,
       'trainingPoints': trainingPoints,
-      'grades': grades,
+      'gradeDistribution': grades,
       'subjects': subjects.map((subject) => subject.toFirestore()).toList(),
+      'advice': advice,
     };
   }
 }
 
 class Subject {
-  final int stt;
-  final String name;
-  final int credits;
+  final int id;          // Số thứ tự tự động
+  final String subjectName;
+  final int credit;
   final String grade;
 
   Subject({
-    required this.stt,
-    required this.name,
-    required this.credits,
+    required this.id,
+    required this.subjectName,
+    required this.credit,
     required this.grade,
   });
 
-  // Chuyển đổi từ Map sang Subject
-  factory Subject.fromFirestore(Map<String, dynamic> data) {
+  // Chuyển đổi từ Map sang Subject và tự động gán stt
+  factory Subject.fromFirestore(Map<String, dynamic> data, int stt) {
     return Subject(
-      stt: data['stt'] as int,
-      name: data['name'] as String,
-      credits: data['credits'] as int,
+      id: stt,
+      subjectName: data['subjectName'] as String,
+      credit: data['credit'] as int,
       grade: data['grade'] as String,
     );
   }
@@ -64,9 +72,9 @@ class Subject {
   // Chuyển đổi từ Subject sang Map
   Map<String, dynamic> toFirestore() {
     return {
-      'stt': stt,
-      'name': name,
-      'credits': credits,
+      'id': id,
+      'subjectName': subjectName,
+      'credit': credit,
       'grade': grade,
     };
   }
