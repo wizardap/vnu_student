@@ -1,9 +1,71 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:vnu_student/features/administrative_gate/screens/BuildRequestStatusTile.dart';
 import 'package:vnu_student/features/administrative_gate/screens/CreateScreen.dart';
 
-class AdministrativeGateScreen extends StatelessWidget {
+class AdministrativeGateScreen extends StatefulWidget {
+  _AdministrativeGateScreen createState() => _AdministrativeGateScreen();
+}
+
+class _AdministrativeGateScreen extends State<AdministrativeGateScreen> {
+  String? userId;
+  List<Map<String, dynamic>> inProgress = [];
+  List<Map<String, dynamic>> done = [];
+  void initState() {
+    super.initState();
+    _getCurrentUser();
+  }
+  void updateState() {
+    setState(() {
+      _fetchDataFromFirestore();
+    });
+  }
+  Future<void> _getCurrentUser() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        userId = user.uid;
+      });
+      _fetchDataFromFirestore();
+    }
+  }
+
+  Future<void> _fetchDataFromFirestore() async {
+    if (userId == null) return;
+
+    // Lấy thông báo từ Firestore
+    QuerySnapshot InProgress = await FirebaseFirestore.instance
+        .collection('administrative_gate')
+        .where('userId', isEqualTo: userId)
+        .where('status', isEqualTo: 'In progress')
+        .get();
+
+    // Lấy tin tức từ Firestore
+    QuerySnapshot Done = await FirebaseFirestore.instance
+        .collection('administrative_gate')
+        .where('userId', isEqualTo: userId)
+        .where('status', isEqualTo: 'Done')
+        .get();
+
+    setState(() {
+      inProgress = InProgress.docs.map((doc) {
+        return {
+          "type": doc['type'],
+          "reason": doc['reason'],
+        };
+      }).toList();
+      done = Done.docs.map((doc) {
+        return {
+          "type": doc['type'],
+          "reason": doc['reason'],
+        };
+      }).toList();
+      print(done);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +93,7 @@ class AdministrativeGateScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => CreateScreen(),
+                    builder: (context) => CreateScreen(userId: userId, callback: updateState),
                   ),
                 );
               },
@@ -77,12 +139,12 @@ class AdministrativeGateScreen extends StatelessWidget {
                 children: [
                   BuildRequestStatusTile(
                     title: 'In progress',
-                    counts: 4,
+                    items: inProgress,
                   ),
                   const SizedBox(height: 20),
                   BuildRequestStatusTile(
                     title: 'Done',
-                    counts: 5,
+                    items: done,
                   ),
                 ],
               ),
@@ -93,4 +155,3 @@ class AdministrativeGateScreen extends StatelessWidget {
     );
   }
 }
-

@@ -1,17 +1,28 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:vnu_student/features/administrative_gate/screens/RequestSelection.dart';
+import 'package:vnu_student/features/administrative_gate/screens/administrative_gate_screen.dart';
 
 class CreateScreen extends StatefulWidget {
+  final String? userId;
+  final Function callback;
+
+  CreateScreen({Key? key, required this.userId, required this.callback}) : super(key: key);
+
   @override
   _CreateScreenState createState() => _CreateScreenState();
 }
 
 class _CreateScreenState extends State<CreateScreen> {
   List<PlatformFile> selectedFiles = [];
-  final TextEditingController vietnamese = TextEditingController(text: '0');
-  final TextEditingController english = TextEditingController(text: '0');
-
+  late String vietnamese;
+  late String english;
+  late String reason = "";
+  late String selectedItem = "";
+  void updateSelectedItem(String newItem) {
+      selectedItem = newItem;  // Cập nhật giá trị trong lớp cha
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +36,23 @@ class _CreateScreenState extends State<CreateScreen> {
             // Nút Save với kích thước nhỏ hơn
             GestureDetector(
               onTap: () async {
-                // Logic khi bấm nút Save
+                try {
+                  print('type:' + selectedItem);
+                  await FirebaseFirestore.instance
+                      .collection('administrative_gate')
+                      .add({
+                        'type': selectedItem,
+                        'userId': widget.userId,
+                        'status': 'In progress',
+                        'reason': reason,
+                      });
+                  print('Document added successfully!');
+                } catch (error) {
+                  print('Error adding document: $error');
+                }
+                widget.callback();
+                Navigator.pop(context,
+                  MaterialPageRoute(builder: (context) => AdministrativeGateScreen()));
               },
               child: Container(
                 padding: EdgeInsets.symmetric(
@@ -69,11 +96,12 @@ class _CreateScreenState extends State<CreateScreen> {
             child: Column(
               children: [
                 // Dropdown ví dụ
-                RequestSelection(),
+                RequestSelection(onItemSelected: updateSelectedItem,),
                 const SizedBox(height: 15),
                 TextField(
                   onSubmitted: (text) {
-                    print('User entered: $text');
+                    reason = text;
+                    print('User entered reason: $reason');
                   },
                   decoration: InputDecoration(
                     labelText: 'Lý do',
@@ -90,7 +118,10 @@ class _CreateScreenState extends State<CreateScreen> {
 
                     Expanded(
                       child: TextField(
-                        controller: vietnamese,
+                        onSubmitted: (text) {
+                          print('User entered: $text');
+                          vietnamese = text;
+                        },
                         decoration: InputDecoration(
                           labelText: 'Số bản tiếng Việt',
                           border: OutlineInputBorder(
@@ -103,7 +134,10 @@ class _CreateScreenState extends State<CreateScreen> {
                     // TextField 2
                     Expanded(
                       child: TextField(
-                        controller: english,
+                        onSubmitted: (text) {
+                          print('User entered: $text');
+                          english = text;
+                        },
                         decoration: InputDecoration(
                           labelText: 'Số bản tiếng Anh',
                           border: OutlineInputBorder(

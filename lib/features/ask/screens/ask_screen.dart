@@ -1,6 +1,6 @@
 // TODO Implement this library.
 import 'package:flutter/material.dart';
-import 'package:vnu_student/features/academic_results/screen/academic_results_screen.dart';
+import 'package:vnu_student/features/academic_results/screen/academic_result_screen.dart';
 import 'package:vnu_student/features/home/screens/home_screen.dart';
 
 class AskScreen extends StatefulWidget {

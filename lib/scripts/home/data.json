@@ -1,0 +1,37 @@
+{
+    "notifications": [
+      {
+        "userId": "DX13bCuO8aWLKkFCTSc1ex8E8jn1",
+        "type": "Notification",
+        "title": "Tuition Fee Reminder",
+        "content": "Pay your tuition fee before Dec 1st.",
+        "imageUrl": "lib/assets/images/notification1.png",
+        "isRead": false
+      },
+      {
+        "userId": "DX13bCuO8aWLKkFCTSc1ex8E8jn1",
+        "type": "Notification",
+        "title": "Exam Schedule Released",
+        "content": "Check the portal for the latest schedule.",
+        "imageUrl": "lib/assets/images/notification2.png",
+        "isRead": false
+      }
+    ],
+    "news": [
+      {
+        "userId": "DX13bCuO8aWLKkFCTSc1ex8E8jn1",
+        "title": "New Semester Starts!",
+        "content": "Prepare for the upcoming semester.",
+        "imageUrl": "lib/assets/images/news1.png",
+        "isRead": false
+      },
+      {
+        "userId": "DX13bCuO8aWLKkFCTSc1ex8E8jn1",
+        "title": "Library Open Hours",
+        "content": "Library will extend its hours during exams.",
+        "imageUrl": "lib/assets/images/news2.png",
+        "isRead": false
+      }
+    ]
+  }
+  

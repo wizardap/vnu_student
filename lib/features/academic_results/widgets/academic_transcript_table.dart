@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:vnu_student/core/constants/constants.dart';
+import '../models/academic_result_model.dart'; // Import AcademicResult và Subject
 
 class AcademicTranscriptTable extends StatelessWidget {
-  final List<Map<String, dynamic>> subjects;
+  final List<Subject> subjects;
 
   AcademicTranscriptTable({required this.subjects});
 
@@ -29,7 +30,7 @@ class AcademicTranscriptTable extends StatelessWidget {
             child: Column(
               children: [
                 _buildHeader(),
-                ..._buildRows(),
+                ..._buildRows(context),
                 _buildSummary(),
               ],
             ),
@@ -73,12 +74,15 @@ class AcademicTranscriptTable extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildRows() {
+  List<Widget> _buildRows(BuildContext context) {
     return subjects.asMap().entries.map((entry) {
       final isLast = entry.key == subjects.length - 1;
+      final subject = entry.value;
+
       return GestureDetector(
         onTap: () {
-          // Logic khi nhấn vào dòng (nếu cần)
+          // Hiển thị thông tin chi tiết môn học nếu cần
+          _showSubjectDetail(context, subject);
         },
         child: Container(
           decoration: BoxDecoration(
@@ -94,10 +98,10 @@ class AcademicTranscriptTable extends StatelessWidget {
           ),
           child: Row(
             children: [
-              _buildDataCell(entry.value["stt"].toString(), flex: 2),
-              _buildDataCell(entry.value["name"], flex: 4),
-              _buildDataCell(entry.value["credits"].toString(), flex: 2),
-              _buildDataCell(entry.value["grade"], flex: 2),
+              _buildDataCell(subject.stt.toString(), flex: 2),
+              _buildDataCell(subject.name, flex: 4),
+              _buildDataCell(subject.credits.toString(), flex: 2),
+              _buildDataCell(subject.grade, flex: 2),
             ],
           ),
         ),
@@ -121,13 +125,17 @@ class AcademicTranscriptTable extends StatelessWidget {
   }
 
   Widget _buildSummary() {
-    final totalCredits = subjects.fold<int>(0, (sum, s) => sum + (s["credits"] as int));
+    final totalCredits = subjects.fold<int>(0, (sum, s) => sum + s.credits);
     final totalSubjects = subjects.length;
 
     return Container(
       padding: EdgeInsets.all(AppSizes.padding),
       decoration: BoxDecoration(
-        color: AppColors.lightGray.withOpacity(0.2),
+        gradient: LinearGradient(
+          colors: [AppColors.primaryGreen, AppColors.lightGray],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(AppSizes.borderRadius),
           bottomRight: Radius.circular(AppSizes.borderRadius),
@@ -137,16 +145,41 @@ class AcademicTranscriptTable extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            "Total Subjects: $totalSubjects",
-            style: AppTextStyles.tableData,
+            "Tổng môn: $totalSubjects",
+            style: AppTextStyles.tableHeader,
           ),
           Text(
-            "Total Credits: $totalCredits",
-            style: AppTextStyles.tableData,
+            "Tổng tín chỉ: $totalCredits",
+            style: AppTextStyles.tableHeader,
           ),
         ],
       ),
     );
   }
-}
 
+  void _showSubjectDetail(BuildContext context, Subject subject) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(subject.name),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("STT: ${subject.stt}"),
+              Text("Số tín chỉ: ${subject.credits}"),
+              Text("Điểm chữ: ${subject.grade}"),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text("Đóng"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}

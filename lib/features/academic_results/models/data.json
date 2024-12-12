@@ -1,0 +1,26 @@
+{
+    "Học kỳ I 2024-2025": {
+      "gpa": 3.8,
+      "trainingPoints": 85,
+      "grades": {
+        "A+": 10,
+        "A": 8,
+        "B+": 5
+      },
+      "subjects": [
+        {
+          "stt": 1,
+          "name": "Toán cao cấp",
+          "credits": 3,
+          "grade": "A+"
+        },
+        {
+          "stt": 2,
+          "name": "Lập trình Python",
+          "credits": 4,
+          "grade": "A"
+        }
+      ]
+    }
+  }
+  

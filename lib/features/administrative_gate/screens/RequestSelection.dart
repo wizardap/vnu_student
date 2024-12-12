@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 
 class RequestSelection extends StatefulWidget {
+  final Function(String) onItemSelected;  // Callback function
+
+  RequestSelection({required this.onItemSelected});  // Constructor
   @override
   _RequestSelectionState createState() => _RequestSelectionState();
 }
 
 class _RequestSelectionState extends State<RequestSelection> {
-  String selectedItem = "Select Item"; // Giá trị hiển thị mặc định
-  List<String> items = ["Item1", "Item2", "Item3"]; // Danh sách các item
+  String selectedItem = "Chứng nhận Sinh viên"; // Giá trị hiển thị mặc định
+  List<String> items = ["Chứng nhận Sinh viên", "Học bổng", "Mất thẻ sinh viên", "Hoãn nghĩa vụ quân sự", "Đăng ký ở KTX", "Giấy giới thiệu thực tập", "Loại khác"]; // Danh sách các item
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +18,7 @@ class _RequestSelectionState extends State<RequestSelection> {
       onSelected: (value) {
         setState(() {
           selectedItem = value;
+          widget.onItemSelected(selectedItem);
         });
       },
       itemBuilder: (context) => items.map((item) {
@@ -32,7 +36,7 @@ class _RequestSelectionState extends State<RequestSelection> {
       ),
       offset: Offset(0, 50), // Đặt vị trí popup bên dưới nút (x: 0, y: 50)
       child: Container(
-        constraints: BoxConstraints(maxWidth: 150), // Giới hạn chiều rộng
+        constraints: BoxConstraints(maxWidth: 212), // Giới hạn chiều rộng
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -53,6 +57,7 @@ class _RequestSelectionState extends State<RequestSelection> {
                 selectedItem,
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                 overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
               ),
             ),
             Icon(Icons.arrow_drop_down),
