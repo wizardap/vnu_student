@@ -5,16 +5,24 @@
         "type": "Notification",
         "title": "Tuition Fee Reminder",
         "content": "Pay your tuition fee before Dec 1st.",
-        "imageUrl": "lib/assets/images/notification1.png",
-        "isRead": false
+        "details": "Please complete your tuition fee payment by December 1st, 2024. Late payments will incur a penalty. For payment instructions, visit the student portal or contact the Finance Department.",
+        "imageUrl": "https://yourstorageurl.com/images/notification1.png",
+        "timestamp": "2024-06-15 10:00 AM",
+        "department": "Finance Department",
+        "contactEmail": "finance@university.edu",
+        "contactPhone": "+123456789"
       },
       {
         "userId": "DX13bCuO8aWLKkFCTSc1ex8E8jn1",
         "type": "Notification",
         "title": "Exam Schedule Released",
-        "content": "Check the portal for the latest schedule.",
-        "imageUrl": "lib/assets/images/notification2.png",
-        "isRead": false
+        "content": "Check the portal for the latest exam schedule.",
+        "details": "The final exam schedule for all subjects has been published. Please check the exam schedule portal to view your exam dates and times.",
+        "imageUrl": "https://yourstorageurl.com/images/notification2.png",
+        "timestamp": "2024-06-20 02:00 PM",
+        "department": "Exam Department",
+        "contactEmail": "exams@university.edu",
+        "contactPhone": "+987654321"
       }
     ],
     "news": [
@@ -22,15 +30,23 @@
         "userId": "DX13bCuO8aWLKkFCTSc1ex8E8jn1",
         "title": "New Semester Starts!",
         "content": "Prepare for the upcoming semester.",
-        "imageUrl": "lib/assets/images/news1.png",
-        "isRead": false
+        "details": "The new semester will officially start on August 15th, 2024. Make sure to review your course schedule and prepare your materials in advance.",
+        "imageUrl": "https://yourstorageurl.com/images/news1.png",
+        "timestamp": "2024-07-01 09:00 AM",
+        "department": "Academic Affairs",
+        "contactEmail": "academics@university.edu",
+        "contactPhone": "+1122334455"
       },
       {
         "userId": "DX13bCuO8aWLKkFCTSc1ex8E8jn1",
         "title": "Library Open Hours",
-        "content": "Library will extend its hours during exams.",
-        "imageUrl": "lib/assets/images/news2.png",
-        "isRead": false
+        "content": "Library hours extended during exam period.",
+        "details": "During the exam period, the library will be open until 10 PM every day.",
+        "imageUrl": "https://yourstorageurl.com/images/news2.png",
+        "timestamp": "2024-07-05 03:00 PM",
+        "department": "Library Services",
+        "contactEmail": "library@university.edu",
+        "contactPhone": "+5566778899"
       }
     ]
   }

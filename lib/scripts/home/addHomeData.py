@@ -2,11 +2,11 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 import json
 
-# Khởi tạo Firebase Admin SDK
-
-SERVICE_ACCOUNT_KEY = "lib/scripts/vnu-student-firebase-adminsdk-p65wi-cd831b7db8.json"
+# Đường dẫn đến file Service Account Key
+SERVICE_ACCOUNT_KEY = "lib/scripts/vnu-student-firebase-adminsdk-p65wi-1150272638.json"
 SOURCE_DATA = "lib/scripts/home/data.json"
 
+# Khởi tạo Firebase Admin SDK
 cred = credentials.Certificate(SERVICE_ACCOUNT_KEY)
 firebase_admin.initialize_app(cred)
 
@@ -22,9 +22,13 @@ def add_notifications(data):
             "type": notification.get("type"),
             "title": notification.get("title"),
             "content": notification.get("content"),
+            "details": notification.get("details"),
             "imageUrl": notification.get("imageUrl"),
+            "timestamp": firestore.SERVER_TIMESTAMP,
+            "department": notification.get("department"),
+            "contactEmail": notification.get("contactEmail"),
+            "contactPhone": notification.get("contactPhone"),
             "isRead": notification.get("isRead", False),
-            "timestamp": firestore.SERVER_TIMESTAMP
         })
         print(f"Notification '{notification['title']}' added successfully.")
 
@@ -36,15 +40,19 @@ def add_news(data):
             "userId": news_item.get("userId"),
             "title": news_item.get("title"),
             "content": news_item.get("content"),
+            "details": news_item.get("details"),
             "imageUrl": news_item.get("imageUrl"),
+            "timestamp": firestore.SERVER_TIMESTAMP,
+            "department": news_item.get("department"),
+            "contactEmail": news_item.get("contactEmail"),
+            "contactPhone": news_item.get("contactPhone"),
             "isRead": news_item.get("isRead", False),
-            "timestamp": firestore.SERVER_TIMESTAMP
         })
         print(f"News '{news_item['title']}' added successfully.")
 
 def main():
     # Đọc dữ liệu từ file JSON
-    with open(SOURCE_DATA, "r") as file:
+    with open(SOURCE_DATA, "r", encoding="utf-8") as file:
         data = json.load(file)
 
     # Thêm dữ liệu vào Firestore
