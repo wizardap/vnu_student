@@ -294,14 +294,28 @@ Widget buildDoneSection() {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(
+                color: Colors.green, // Màu xanh cho chữ Cancel
+              ),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
               _addQuestionToFirestore();
               Navigator.pop(context);
             },
-            child: const Text('Submit'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF13511C), // Màu nền xanh cho nút Submit
+            ),
+            child: const Text(
+              'Submit',
+              style: TextStyle(
+                color: Colors.white, // Chữ trắng trên nền xanh
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       );
@@ -499,7 +513,7 @@ class _BuildRequestStatusTileState extends State<BuildRequestStatusTile> {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: isExpanded ? Colors.green[300] : Colors.grey[200], // Background for title and icon
+              color: isExpanded ? Color(0xFF13511C) : Colors.grey[200], // Background for title and icon
               borderRadius: BorderRadius.circular(12.0),
             ),
             child: ListTile(
