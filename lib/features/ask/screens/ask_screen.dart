@@ -350,7 +350,12 @@ Widget buildDoneSection() {
               final question = regularQuestions[index]['question'];
               final answer = regularQuestions[index]['answer'];
 
-              return Card(
+              return Container(
+                decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(0.2),
+                    //border: Border.all(color: Color(0xFF13511C).withOpacity(0.4)),
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
                 margin: const EdgeInsets.symmetric(vertical: 8),
                 child: ListTile(
                   title: Text(
@@ -381,6 +386,7 @@ Widget buildDoneSection() {
     context: context,
     builder: (BuildContext context) {
       return Dialog(
+        backgroundColor: AppColors.backgroundColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),

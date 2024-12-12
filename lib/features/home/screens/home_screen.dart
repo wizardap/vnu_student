@@ -119,7 +119,9 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: Stack(
+      backgroundColor: Colors.white,
+      body: Container(
+      child: Stack(
         children: [
           _buildAnimatedBackground(),
           isLoading
@@ -137,6 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
         ],
+      ),
       ),
     );
   }
