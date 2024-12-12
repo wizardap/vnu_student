@@ -94,6 +94,13 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Thêm logo vào đây
+            Image.asset(
+              'lib/assets/images/logo_VNU.png',
+              height: 100, // Đặt chiều cao tùy ý
+              width: 100, // Đặt chiều rộng tùy ý
+            ),
+            SizedBox(height: 100), // Khoảng cách giữa logo và các thành phần khác
             TextField(
               controller: _emailController,
               decoration: InputDecoration(
