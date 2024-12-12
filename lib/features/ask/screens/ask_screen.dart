@@ -94,7 +94,11 @@ class _AskScreenState extends State<AskScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ask Question'),
+        title: const Text('Ask Question',style: TextStyle(
+            fontSize: 26,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),),
         backgroundColor: Colors.white,
         elevation: 0,
       ),
