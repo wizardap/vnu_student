@@ -68,7 +68,7 @@ Chúng tôi luôn chào đón các ý tưởng và phản hồi để cải thi�
 Nếu có bất kỳ câu hỏi hoặc phản hồi nào, vui lòng liên hệ:
 
 - **Email:** 22021149@vnu.edu.vn
-- **Số điện thoại:** +84 xxx xxx xxx
+
 
 ---
 
