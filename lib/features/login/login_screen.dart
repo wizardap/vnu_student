@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:vnu_student/core/constants/constants.dart';
 import '../main_screen.dart';
 import 'register_screen.dart';
 import 'forgot_password_screen.dart';
@@ -89,73 +90,83 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         title: Text("Login"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Thêm logo vào đây
-            Image.asset(
-              'lib/assets/images/logo_VNU.png',
-              height: 100, // Đặt chiều cao tùy ý
-              width: 100, // Đặt chiều rộng tùy ý
-            ),
-            SizedBox(height: 100), // Khoảng cách giữa logo và các thành phần khác
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(),
+      body: SafeArea(
+  child: SingleChildScrollView(
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch, // Căn giữa các thành phần
+        children: [
+          // Thêm logo vào đây
+          Image.asset(
+            'lib/assets/images/logo_VNU.png',
+            height: 100, // Đặt chiều cao tùy ý
+            width: 100, // Đặt chiều rộng tùy ý
+          ),
+          const SizedBox(height: 50), // Khoảng cách giữa logo và các thành phần khác
+          TextField(
+            controller: _emailController,
+            decoration: InputDecoration(
+              labelText: 'Email',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
               ),
-              keyboardType: TextInputType.emailAddress,
             ),
-            SizedBox(height: 16),
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(),
+            keyboardType: TextInputType.emailAddress,
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _passwordController,
+            decoration: InputDecoration(
+              labelText: 'Password',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
               ),
-              obscureText: true,
             ),
-            SizedBox(height: 16),
-            _isLoading
-                ? CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: _login,
-                    child: Text(
-                      "Login",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+            obscureText: true,
+          ),
+          const SizedBox(height: 16),
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : ElevatedButton(
+                  onPressed: _login,
+                  child: const Text(
+                    "Login",
+                    style: TextStyle(color: Colors.white),
                   ),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ForgotPasswordScreen()),
-                );
-              },
-              child: Text(
-                "Forgot Password?",
-                style: TextStyle(color: Colors.green),
-              ),
+                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryGreen),
+                ),
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ForgotPasswordScreen()),
+              );
+            },
+            child: const Text(
+              "Forgot Password?",
+              style: TextStyle(color: AppColors.primaryGreen),
             ),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => RegisterScreen()),
-                );
-              },
-              child: Text(
-                "Don't have an account? Register now.",
-                style: TextStyle(color: Colors.green),
-              ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => RegisterScreen()),
+              );
+            },
+            child: const Text(
+              "Don't have an account? Register now.",
+              style: TextStyle(color: AppColors.primaryGreen),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
+    ),
+  ),
+),
+
     );
   }
 }

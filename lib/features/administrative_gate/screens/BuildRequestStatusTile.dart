@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vnu_student/features/administrative_gate/screens/DetailScreen.dart';
 
 class BuildRequestStatusTile extends StatefulWidget {
   final String title;
@@ -78,30 +79,19 @@ class _BuildRequestStatusTileState extends State<BuildRequestStatusTile> {
                           '${widget.items[index]['type']}',
                           style: const TextStyle(
                             color: Colors.black,
-                            fontWeight: FontWeight.w400,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
                       IconButton(
                         icon: const Icon(Icons.info),
                         onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text('Popup Title'),
-                                content:
-                                    Text('This is the content of the popup.'),
-                                actions: <Widget>[
-                                  TextButton(
-                                    child: Text('Close'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
+                          print(widget.items[index]);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailScreen(items: widget.items[index]),
+                            ),
                           );
                         },
                       ),

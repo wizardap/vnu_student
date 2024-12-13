@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:vnu_student/core/constants/constants.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -32,7 +33,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Account created. Please verify your email before logging in.'),
-        backgroundColor: Colors.green,
+        backgroundColor: AppColors.primaryGreen,
       ),
     );
 
@@ -74,7 +75,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       appBar: AppBar(
         title: Text(
           "Register",
-          style: TextStyle(color: Colors.green),
+          style: TextStyle(color: AppColors.primaryGreen),
         ),
       ),
       body: Padding(
@@ -87,7 +88,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 controller: _nameController,
                 decoration: InputDecoration(
                   labelText: 'Full Name',
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
                 ),
               ),
               SizedBox(height: 16),
@@ -95,7 +98,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'Email',
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
                 ),
                 keyboardType: TextInputType.emailAddress,
               ),
@@ -104,7 +109,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 controller: _passwordController,
                 decoration: InputDecoration(
                   labelText: 'Password',
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
                 ),
                 obscureText: true,
               ),
@@ -114,7 +121,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   : ElevatedButton(
                       onPressed: _register,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                        backgroundColor: AppColors.primaryGreen,
                         padding: EdgeInsets.symmetric(horizontal: 50, vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),

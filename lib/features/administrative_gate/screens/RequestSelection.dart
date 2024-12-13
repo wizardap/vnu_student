@@ -9,7 +9,7 @@ class RequestSelection extends StatefulWidget {
 }
 
 class _RequestSelectionState extends State<RequestSelection> {
-  String selectedItem = "Chứng nhận Sinh viên"; // Giá trị hiển thị mặc định
+  String selectedItem = "Chọn loại yêu cầu"; // Giá trị hiển thị mặc định
   List<String> items = ["Chứng nhận Sinh viên", "Học bổng", "Mất thẻ sinh viên", "Hoãn nghĩa vụ quân sự", "Đăng ký ở KTX", "Giấy giới thiệu thực tập", "Loại khác"]; // Danh sách các item
 
   @override
@@ -56,6 +56,7 @@ class _RequestSelectionState extends State<RequestSelection> {
               child: Text(
                 selectedItem,
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,
               ),

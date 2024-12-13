@@ -28,18 +28,14 @@ class _UserManualScreenState extends State<UserManualScreen> {
           'Theo dõi lịch thi và sự kiện quan trọng một cách nhanh chóng.',
     },
     {
-      'image': 'lib/assets/images/user_manual_faq.png',
+      'image': 'lib/assets/images/user_manual4.png',
       'title': 'Câu hỏi thường gặp',
-      'description': '''
-1. Làm sao để đổi mật khẩu?
-   - Vào menu > Cài đặt > Đổi mật khẩu.
-
-2. Làm sao để xem thông báo cũ?
-   - Vào mục "Thông báo" trong menu chính.
-
-3. Làm sao để liên hệ với bộ phận hỗ trợ?
-   - Gửi email tới support@example.com.
-      ''',
+      'description': 'Đặt và theo các câu hỏi gửi đến nhà trường',
+    },
+    {
+      'image': 'lib/assets/images/user_manual5.png',
+      'title': 'Cổng hành chính',
+      'description': 'Tạo và theo dõi các yêu cầu hành chính được gửi lên nhà trường',
     },
   ];
 
@@ -82,7 +78,7 @@ class _UserManualScreenState extends State<UserManualScreen> {
                     // Hình ảnh minh họa
                     Image.asset(
                       page['image']!,
-                      height: 250,
+                      height: 500,
                       fit: BoxFit.contain,
                     ),
                     SizedBox(height: 20),

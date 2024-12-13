@@ -167,6 +167,7 @@ class AcademicTranscriptTable extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
+          backgroundColor: AppColors.backgroundColor,
           title: Text(subject.subjectName),
           content: Column(
             mainAxisSize: MainAxisSize.min,

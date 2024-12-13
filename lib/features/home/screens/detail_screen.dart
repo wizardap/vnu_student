@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vnu_student/core/constants/constants.dart';
 
 class DetailScreen extends StatelessWidget {
   final String title;
@@ -25,11 +26,16 @@ class DetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Article'),
+        title: Text('Article', style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
-        elevation: 1,
+        elevation: 0,
       ),
+      backgroundColor: AppColors.backgroundColor,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,19 +101,19 @@ class DetailScreen extends StatelessWidget {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16.0),
-              color: Colors.grey.shade100,
+              color: Colors.white,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Divider(),
                   Text(
                     'Department: $department',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.primaryGreen),
                   ),
                   SizedBox(height: 10),
                   Row(
                     children: [
-                      Icon(Icons.email, color: Colors.blue),
+                      Icon(Icons.email, color: AppColors.primaryGreen),
                       SizedBox(width: 10),
                       Text(
                         contactEmail,
@@ -118,7 +124,7 @@ class DetailScreen extends StatelessWidget {
                   SizedBox(height: 10),
                   Row(
                     children: [
-                      Icon(Icons.phone, color: Colors.green),
+                      Icon(Icons.phone, color: AppColors.primaryGreen),
                       SizedBox(width: 10),
                       Text(
                         contactPhone,

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:vnu_student/core/constants/constants.dart';
 import 'package:vnu_student/features/administrative_gate/screens/RequestSelection.dart';
 import 'package:vnu_student/features/administrative_gate/screens/administrative_gate_screen.dart';
 
@@ -16,9 +17,10 @@ class CreateScreen extends StatefulWidget {
 
 class _CreateScreenState extends State<CreateScreen> {
   
-  List<PlatformFile> selectedFiles = [];
-  late String vietnamese;
-  late String english;
+  late List<PlatformFile> selectedFiles = [];
+  List<Map<String, dynamic>> filesData = [];
+  late String vietnamese = "0";
+  late String english = "0";
   late String reason = "";
   late String selectedItem = "";
   void updateSelectedItem(String newItem) {
@@ -29,7 +31,11 @@ class _CreateScreenState extends State<CreateScreen> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text("Create Request", style: TextStyle(color: Colors.black)),
+          title: Text("Create Request", style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),),
           backgroundColor: Colors.white,
           elevation: 0,
           iconTheme: IconThemeData(color: Colors.black),
@@ -37,15 +43,25 @@ class _CreateScreenState extends State<CreateScreen> {
             // Nút Save với kích thước nhỏ hơn
             GestureDetector(
               onTap: () async {
+                filesData = selectedFiles.map((file) {
+                  return {
+                    "file_name": file.name, // Tên file
+                    "file_size": file.size, // Kích thước file (có thể chuyển đổi theo nhu cầu)
+                  };
+                }).toList();
+
                 try {
                   print('type:' + selectedItem);
                   await FirebaseFirestore.instance
                       .collection('administrative_gate')
                       .add({
+                        'file': filesData,
                         'type': selectedItem,
                         'userId': widget.userId,
                         'status': 'In progress',
                         'reason': reason,
+                        'vietnamese': vietnamese,
+                        'english': english,
                       });
                   print('Document added successfully!');
                 } catch (error) {
@@ -205,16 +221,18 @@ class _CreateScreenState extends State<CreateScreen> {
                     itemBuilder: (context, index) {
                       final file = selectedFiles[index];
                       return Card(
+                        elevation: 0,
+                        color: Colors.grey.withOpacity(0.3),
                         margin:
                             EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                         child: ListTile(
                           leading:
-                              Icon(Icons.insert_drive_file, color: Colors.blue),
+                              Icon(Icons.insert_drive_file, color: AppColors.primaryGreen),
                           title: Text(file.name),
                           subtitle: Text(
                               '${(file.size / 1024).toStringAsFixed(2)} KB'),
                           trailing: IconButton(
-                            icon: Icon(Icons.delete, color: Colors.red),
+                            icon: Icon(Icons.delete, color: Colors.red.withOpacity(0.8)),
                             onPressed: () {
                               setState(() {
                                 selectedFiles.removeAt(index);

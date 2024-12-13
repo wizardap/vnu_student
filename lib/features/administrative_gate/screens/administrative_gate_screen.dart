@@ -54,12 +54,20 @@ class _AdministrativeGateScreen extends State<AdministrativeGateScreen> {
         return {
           "type": doc['type'],
           "reason": doc['reason'],
+          "status": doc['status'],
+          "vietnamese": doc['vietnamese'],
+          "english": doc['english'],
+          "file": doc['file'],
         };
       }).toList();
       done = Done.docs.map((doc) {
         return {
           "type": doc['type'],
           "reason": doc['reason'],
+          "status": doc['status'],
+          "vietnamese": doc['vietnamese'],
+          "english": doc['english'],
+          "file": doc['file'],
         };
       }).toList();
       print(done);

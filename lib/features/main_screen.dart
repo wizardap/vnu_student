@@ -114,11 +114,9 @@ class _MainScreenState extends State<MainScreen> {
                     Container(
                       padding: EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Colors.green, Colors.lightGreen],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        
+                          color: AppColors.primaryGreen,
+                         
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(20),
                         ),
@@ -127,7 +125,7 @@ class _MainScreenState extends State<MainScreen> {
                         children: [
                           CircleAvatar(
                             backgroundColor: Colors.white,
-                            child: Icon(Icons.person, color: Colors.green),
+                            child: Icon(Icons.person, color: AppColors.primaryGreen),
                           ),
                           SizedBox(width: 16),
                           Expanded(
@@ -267,7 +265,7 @@ class _MainScreenState extends State<MainScreen> {
     required VoidCallback onTap,
   }) {
     return ListTile(
-      leading: Icon(icon, color: Colors.green),
+      leading: Icon(icon, color: AppColors.primaryGreen),
       title: Text(
         text,
         style: TextStyle(

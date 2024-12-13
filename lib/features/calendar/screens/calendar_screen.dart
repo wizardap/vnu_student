@@ -163,11 +163,25 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: dateTimeHelper.getSelectedDate(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
+  context: context,
+  initialDate: dateTimeHelper.getSelectedDate(),
+  firstDate: DateTime(2000),
+  lastDate: DateTime(2101),
+  builder: (BuildContext context, Widget? child) {
+    return Theme(
+      data: Theme.of(context).copyWith(
+        colorScheme: ColorScheme.light(
+          primary: AppColors.primaryGreen, // Màu chính của picker (ví dụ: nút chọn)
+          onPrimary: Colors.white, // Màu chữ trên màu chính
+          onSurface: Colors.black, // Màu chữ trên nền
+        ),
+        dialogBackgroundColor: Colors.white, // Nền của picker
+      ),
+      child: child!,
     );
+  },
+);
+
     if (picked != null && picked != dateTimeHelper.getSelectedDate()) {
       setState(() {
         dateTimeHelper.set(picked);

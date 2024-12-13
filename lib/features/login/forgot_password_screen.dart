@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:vnu_student/core/constants/constants.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   @override
@@ -23,7 +24,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('A password reset link has been sent to your email.'),
-          backgroundColor: Colors.green,
+          backgroundColor: AppColors.primaryGreen,
         ),
       );
 
@@ -61,7 +62,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       appBar: AppBar(
         title: Text(
           "Forgot Password",
-          style: TextStyle(color: Colors.green),
+          style: TextStyle(color: AppColors.primaryGreen),
         ),
       ),
       body: Padding(
@@ -74,7 +75,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'Enter your email',
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
                 ),
                 keyboardType: TextInputType.emailAddress,
               ),
@@ -84,7 +87,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   : ElevatedButton(
                       onPressed: _resetPassword,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                        backgroundColor: AppColors.primaryGreen,
                         padding: EdgeInsets.symmetric(horizontal: 50, vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),

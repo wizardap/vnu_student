@@ -158,8 +158,32 @@ class _AskScreenState extends State<AskScreen> {
     padding: const EdgeInsets.symmetric(horizontal: 16),
     children: [
       ListTile(
-        title: const Text('Create a question'),
-        leading: const Icon(Icons.add, color: Colors.green),
+        title: Container(
+          
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                child: Row(
+                  children: [
+                    Icon(Icons.add, color: Color(0xFF13511C)),
+                    SizedBox(width: 10),
+                    Text(
+                      'Create a request',
+                      style: TextStyle(color: Colors.grey, fontSize: 16),
+                    ),
+                  ],
+                ),
+              ),
         onTap: () => _showCreateQuestionDialog(),
       ),
       const SizedBox(height: 20),
@@ -217,7 +241,7 @@ Widget buildInProgressSection() {
             child: ListTile(
               title: Text(questionText),
               trailing: IconButton(
-                icon: const Icon(Icons.check, color: Colors.green),
+                icon: const Icon(Icons.check, color: AppColors.primaryGreen),
                 onPressed: () {
                   markQuestionAsDone(questionData.id);
                 },
@@ -297,7 +321,7 @@ Widget buildDoneSection() {
             child: const Text(
               'Cancel',
               style: TextStyle(
-                color: Colors.green, // Màu xanh cho chữ Cancel
+                color: AppColors.primaryGreen, // Màu xanh cho chữ Cancel
               ),
             ),
           ),
@@ -374,7 +398,7 @@ Widget buildDoneSection() {
                 child: ListTile(
                   title: Text(
                     'Question ${index + 1}: ${_truncateText(question)}', // Truncate text with ellipsis
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.w500),
                   ),
                   onTap: () => _showQuestionDialog(context, question, answer), // Khi nhấn vào câu hỏi
                 ),
@@ -600,7 +624,7 @@ class _BuildRequestStatusTileState extends State<BuildRequestStatusTile> {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.green,
+                    color: AppColors.primaryGreen,
                   ),
                 ),
               ),
@@ -651,7 +675,7 @@ class _BuildRequestStatusTileState extends State<BuildRequestStatusTile> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    backgroundColor: Colors.green, // Button color
+                    backgroundColor: AppColors.primaryGreen, // Button color
                   ),
                 ),
               ),

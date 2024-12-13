@@ -107,6 +107,7 @@ class _AcademicResultsScreenState extends State<AcademicResultsScreen> {
             );
 
             return SingleChildScrollView(
+              
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -188,6 +189,8 @@ class _AcademicResultsScreenState extends State<AcademicResultsScreen> {
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
+                  dropdownColor: AppColors.backgroundColor,
+                  borderRadius: BorderRadius.circular(15),
                   value: _selectedSemester,
                   icon: Icon(Icons.arrow_drop_down, color: AppColors.iconGray),
                   style: AppTextStyles.dropdownItem,
@@ -227,6 +230,7 @@ class _AcademicResultsScreenState extends State<AcademicResultsScreen> {
         return DefaultTabController(
           length: 3,
           child: Container(
+            color: AppColors.backgroundColor,
             height: MediaQuery.of(context).size.height * 0.8,
             padding: EdgeInsets.all(AppSizes.padding),
             child: Column(

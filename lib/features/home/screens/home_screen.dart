@@ -114,9 +114,9 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text(
           'Home',
-          style: AppTextStyles.appBarTitleWhite,
+          style: AppTextStyles.appBarTitle,
         ),
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0,
       ),
       backgroundColor: Colors.white,
@@ -147,12 +147,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildAnimatedBackground() {
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Colors.blueAccent.shade200, Colors.greenAccent.shade200],
+
+          color: AppColors.white,
         ),
-      ),
     );
   }
 
@@ -186,7 +183,8 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(16.5),
+          border: Border.all(color: Colors.black.withOpacity(0.2)),
           image: DecorationImage(
             image: NetworkImage(item['imageUrl']),
             fit: BoxFit.cover,
@@ -245,10 +243,10 @@ class _HomeScreenState extends State<HomeScreen> {
         duration: Duration(milliseconds: 300),
         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.green : Colors.white,
+          color: isSelected ? AppColors.primaryGreen : Colors.grey.withOpacity(0.3),
           borderRadius: BorderRadius.circular(20),
           boxShadow: isSelected
-              ? [BoxShadow(color: Colors.green.withOpacity(0.5), blurRadius: 8)]
+              ? [BoxShadow(color: AppColors.primaryGreen.withOpacity(0.5), blurRadius: 8)]
               : [],
         ),
         child: Text(
@@ -291,10 +289,11 @@ class _HomeScreenState extends State<HomeScreen> {
         itemCount: filteredItems.length,
         itemBuilder: (context, index) {
           return Card(
+            color: Colors.grey.withOpacity(0.3),
             margin: EdgeInsets.symmetric(vertical: 8),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            elevation: 3,
+            elevation: 0,
             child: ListTile(
               leading: CircleAvatar(
                 backgroundImage: filteredItems[index]['imageUrl'] != null
@@ -308,13 +307,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: filteredItems[index]['isRead']
-                      ? Colors.grey
+                      ? Colors.black.withOpacity(0.7)
                       : Colors.black,
                 ),
               ),
               subtitle: Text(filteredItems[index]['content']),
               trailing: filteredItems[index]['isRead']
-                  ? Icon(Icons.check_circle, color: Colors.green)
+                  ? Icon(Icons.check_circle, color: AppColors.primaryGreen)
                   : Icon(Icons.circle, color: Colors.grey),
               onTap: () {
                 _markAsRead(
