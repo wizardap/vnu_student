@@ -121,7 +121,10 @@ class _CreateScreenState extends State<CreateScreen> {
                     print('User entered reason: $reason');
                   },
                   decoration: InputDecoration(
-                    labelText: 'Lý do',
+                    labelText: 'Reason',
+                    labelStyle: TextStyle(
+                            fontSize: 16, // Thay đổi kích thước của labelText
+                          ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -140,7 +143,10 @@ class _CreateScreenState extends State<CreateScreen> {
                           vietnamese = text;
                         },
                         decoration: InputDecoration(
-                          labelText: 'Số bản tiếng Việt',
+                          labelText: 'Quantity of The Vietnamese Version',
+                          labelStyle: TextStyle(
+                            fontSize: 11, // Thay đổi kích thước của labelText
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -156,7 +162,10 @@ class _CreateScreenState extends State<CreateScreen> {
                           english = text;
                         },
                         decoration: InputDecoration(
-                          labelText: 'Số bản tiếng Anh',
+                          labelText: 'Quantity of The English Version',
+                          labelStyle: TextStyle(
+                            fontSize: 11, // Thay đổi kích thước của labelText
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),

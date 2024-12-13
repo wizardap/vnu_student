@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vnu_student/core/constants/constants.dart';
 
 class UserManualScreen extends StatefulWidget {
   @override
@@ -12,30 +13,28 @@ class _UserManualScreenState extends State<UserManualScreen> {
   final List<Map<String, String>> _manualPages = [
     {
       'image': 'lib/assets/images/user_manual1.png',
-      'title': 'Chào mừng đến với ứng dụng',
-      'description': 'Khám phá các tính năng dễ dàng và thuận tiện.',
+      'title': 'Welcome to the app',
+      'description': 'Explore features easily and conveniently.',
     },
     {
       'image': 'lib/assets/images/user_manual2.png',
-      'title': 'Kết quả học tập',
-      'description':
-          'Xem kết quả học tập qua từng học kỳ, chi tiết từng môn học.',
+      'title': 'Academic Results',
+      'description': 'View academic results by semester, details of each subject.',
     },
     {
       'image': 'lib/assets/images/user_manual3.png',
-      'title': 'Quản lý lịch thi',
-      'description':
-          'Theo dõi lịch thi và sự kiện quan trọng một cách nhanh chóng.',
+      'title': 'Exam Schedule Management',
+      'description': 'Track exam schedules and important events quickly.',
     },
     {
       'image': 'lib/assets/images/user_manual4.png',
-      'title': 'Câu hỏi thường gặp',
-      'description': 'Đặt và theo các câu hỏi gửi đến nhà trường',
+      'title': 'Frequently Asked Questions',
+      'description': 'Ask and follow up on questions sent to the university.',
     },
     {
       'image': 'lib/assets/images/user_manual5.png',
-      'title': 'Cổng hành chính',
-      'description': 'Tạo và theo dõi các yêu cầu hành chính được gửi lên nhà trường',
+      'title': 'Administrative Portal',
+      'description': 'Create and track administrative requests sent to the university.',
     },
   ];
 
@@ -51,15 +50,16 @@ class _UserManualScreenState extends State<UserManualScreen> {
   }
 
   void _finishManual() {
-    Navigator.pop(context); // Quay về màn hình trước
+    Navigator.pop(context); // Go back to the previous screen
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.backgroundColor,
       body: Stack(
         children: [
-          // PageView hiển thị từng bước hướng dẫn
+          // PageView displaying each guide step
           PageView.builder(
             controller: _pageController,
             onPageChanged: (index) {
@@ -75,26 +75,32 @@ class _UserManualScreenState extends State<UserManualScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Hình ảnh minh họa
-                    Image.asset(
-                      page['image']!,
-                      height: 500,
-                      fit: BoxFit.contain,
-                    ),
+                    // Image illustration
+                    Container(
+  decoration: BoxDecoration(
+    border: Border.all(color: Colors.grey.withOpacity(0.5), width: 1), // Thêm viền nếu muốn
+  ),
+  child: Image.asset(
+    page['image']!,
+    height: 500,
+    fit: BoxFit.contain,
+  ),
+),
+
                     SizedBox(height: 20),
 
-                    // Tiêu đề
+                    // Title
                     Text(
                       page['title']!,
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.green,
+                        color: AppColors.primaryGreen,
                       ),
                     ),
                     SizedBox(height: 10),
 
-                    // Mô tả nội dung
+                    // Description
                     Text(
                       page['description']!,
                       textAlign: TextAlign.center,
@@ -109,7 +115,7 @@ class _UserManualScreenState extends State<UserManualScreen> {
             },
           ),
 
-          // Nút "Skip"
+          // "Skip" button
           if (_currentPage < _manualPages.length - 1)
             Positioned(
               top: 40,
@@ -117,24 +123,24 @@ class _UserManualScreenState extends State<UserManualScreen> {
               child: GestureDetector(
                 onTap: _finishManual,
                 child: Text(
-                  'Bỏ qua',
+                  'Skip',
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.blue,
+                    color: AppColors.primaryGreen,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
             ),
 
-          // Điều hướng giữa các bước
+          // Navigation between steps
           Positioned(
             bottom: 30,
             left: 0,
             right: 0,
             child: Column(
               children: [
-                // Chỉ báo vị trí (dots)
+                // Position indicator (dots)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(
@@ -146,7 +152,7 @@ class _UserManualScreenState extends State<UserManualScreen> {
                       height: 8,
                       decoration: BoxDecoration(
                         color:
-                            _currentPage == index ? Colors.blue : Colors.grey,
+                            _currentPage == index ? AppColors.primaryGreen : Colors.grey,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -154,20 +160,18 @@ class _UserManualScreenState extends State<UserManualScreen> {
                 ),
                 SizedBox(height: 20),
 
-                // Nút Next/Finish
+                // Next/Finish button
                 ElevatedButton(
                   onPressed: _nextPage,
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                    backgroundColor: Color(0xFF13511C), // Màu nền xanh cho nút Submit
                   ),
                   child: Text(
                     _currentPage == _manualPages.length - 1
-                        ? 'Hoàn thành'
-                        : 'Tiếp tục',
-                    style: TextStyle(fontSize: 16),
+                        ? 'Finish'
+                        : 'Continue',
+                    style: TextStyle(fontSize: 16, color: Colors.white, // Chữ trắng trên nền xanh
+                fontWeight: FontWeight.bold,),
                   ),
                 ),
               ],

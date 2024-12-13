@@ -9,8 +9,8 @@ class RequestSelection extends StatefulWidget {
 }
 
 class _RequestSelectionState extends State<RequestSelection> {
-  String selectedItem = "Chọn loại yêu cầu"; // Giá trị hiển thị mặc định
-  List<String> items = ["Chứng nhận Sinh viên", "Học bổng", "Mất thẻ sinh viên", "Hoãn nghĩa vụ quân sự", "Đăng ký ở KTX", "Giấy giới thiệu thực tập", "Loại khác"]; // Danh sách các item
+  String selectedItem = "Select request type"; // Default display value
+List<String> items = ["Student Certificate", "Scholarship", "Lost Student ID", "Military Service Deferral", "Dormitory Registration", "Internship Introduction Letter", "Other types"]; // List of items
 
   @override
   Widget build(BuildContext context) {
