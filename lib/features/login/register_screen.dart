@@ -73,11 +73,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppColors.backgroundColor,
         title: Text(
           "Register",
           style: TextStyle(color: AppColors.primaryGreen),
         ),
       ),
+      backgroundColor: AppColors.backgroundColor,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
